@@ -34,8 +34,11 @@ namespace mortal_kombat
         createBoundary(RIGHT);
         initialScreen();  // Show intro splash before the game loop
         auto [p1Index, p2Index] = chooseFighterScreen();
-        bagel::Entity player1 = createPlayer(PLAYER_1_BASE_X, PLAYER_BASE_Y, Characters::SUBZERO, 1);
-        bagel::Entity player2 = createPlayer(PLAYER_2_BASE_X, PLAYER_BASE_Y, Characters::LIU_KANG, 2);
+        Character character1 = Characters::ALL_CHARACTERS[p1Index];
+        Character character2 = Characters::ALL_CHARACTERS[p2Index];
+
+        bagel::Entity player1 = createPlayer(PLAYER_1_BASE_X, PLAYER_BASE_Y, character1, 1);
+        bagel::Entity player2 = createPlayer(PLAYER_2_BASE_X, PLAYER_BASE_Y, character2, 2);
 
         createBar(player1, player2);
     }
@@ -133,7 +136,7 @@ namespace mortal_kombat
     const float startX = boxX * scaleX;
     const float startY = boxY * scaleY;
 
-    constexpr int GRID_COLS = 4;
+    constexpr int GRID_COLS = numOfFighters;
     constexpr int GRID_ROWS = 2;
 
     int selectedP1 = 0;  // only moves in row 0
