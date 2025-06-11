@@ -115,6 +115,14 @@ namespace mortal_kombat
         return {-1, -1};
     }
 
+    // Load character images
+    SDL_Texture* characterTextures[4] = {
+        TextureSystem::getTexture(ren, "res/moshe.jpeg", TextureSystem::IgnoreColorKey::CHARACTER),
+        TextureSystem::getTexture(ren, "res/itamar.jpeg", TextureSystem::IgnoreColorKey::CHARACTER),
+        TextureSystem::getTexture(ren, "res/yaniv.jpeg", TextureSystem::IgnoreColorKey::CHARACTER),
+        TextureSystem::getTexture(ren, "res/geffen.jpeg", TextureSystem::IgnoreColorKey::CHARACTER)
+    };
+
     SDL_FRect srcRect = {900, 381, 256, 183};
     SDL_FRect destRect = {
         0.0f,
@@ -123,8 +131,8 @@ namespace mortal_kombat
         static_cast<float>(WINDOW_HEIGHT)
     };
 
-    const float boxX = 903.0f - 901.0f;
-    const float boxY = 409.0f - 383.0f;
+    const float boxX = 903.0f - 900.0f;
+    const float boxY = 409.0f - 381.0f;
     const float boxW = 65.0f;
     const float boxH = 80.0f;
 
@@ -136,11 +144,10 @@ namespace mortal_kombat
     const float startX = boxX * scaleX;
     const float startY = boxY * scaleY;
 
-    constexpr int GRID_COLS = numOfFighters;
-    constexpr int GRID_ROWS = 2;
+    constexpr int GRID_COLS = 4;
 
-    int selectedP1 = 0;  // only moves in row 0
-    int selectedP2 = 4;  // only moves in row 1 (start of lower row)
+    int selectedP1 = 0;  // Top row (0-3)
+    int selectedP2 = 4;  // Bottom row (4-7, but we only have 4 characters)
 
     SDL_Event event;
     bool choosing = true;
@@ -151,28 +158,22 @@ namespace mortal_kombat
             if (event.type == SDL_EVENT_QUIT) exit(0);
             else if (event.type == SDL_EVENT_KEY_DOWN) {
                 switch (event.key.key) {
-                    // Player 1 controls (top row)
                     case SDLK_LEFT:
                         if (selectedP1 % GRID_COLS > 0) selectedP1--;
                         break;
                     case SDLK_RIGHT:
                         if (selectedP1 % GRID_COLS < GRID_COLS - 1) selectedP1++;
                         break;
-
-                    // Player 2 controls (bottom row)
                     case SDLK_A:
-                        if ((selectedP2 % GRID_COLS) > 0) selectedP2--;
+                        if (selectedP2 % GRID_COLS > 0) selectedP2--;
                         break;
                     case SDLK_D:
-                        if ((selectedP2 % GRID_COLS) < GRID_COLS - 1) selectedP2++;
+                        if (selectedP2 % GRID_COLS < GRID_COLS - 1) selectedP2++;
                         break;
-
-                    // Confirm both players
                     case SDLK_RETURN:
                     case SDLK_KP_ENTER:
                         choosing = false;
                         break;
-
                     case SDLK_ESCAPE:
                         exit(0);
                 }
@@ -183,7 +184,30 @@ namespace mortal_kombat
         SDL_RenderClear(ren);
         SDL_RenderTexture(ren, menuTexture, &srcRect, &destRect);
 
-        // Render Player 1 highlight (Red)
+        // Draw character textures in grid
+        for (int i = 0; i < numOfFighters; ++i) {
+            int col = i % GRID_COLS;
+
+            // Top row (Player 1)
+            SDL_FRect dstTop = {
+                startX + col * scaledBoxW,
+                startY + 0 * scaledBoxH,  // row 0
+                scaledBoxW,
+                scaledBoxH
+            };
+            SDL_RenderTexture(ren, characterTextures[i], nullptr, &dstTop);
+
+            // Bottom row (Player 2)
+            SDL_FRect dstBottom = {
+                startX + col * scaledBoxW,
+                startY + 1 * scaledBoxH,  // row 1
+                scaledBoxW,
+                scaledBoxH
+            };
+            SDL_RenderTexture(ren, characterTextures[i], nullptr, &dstBottom);
+        }
+
+        // Draw Player 1 highlight (red)
         {
             int row = selectedP1 / GRID_COLS;
             int col = selectedP1 % GRID_COLS;
@@ -195,7 +219,7 @@ namespace mortal_kombat
                 scaledBoxH
             };
 
-            SDL_SetRenderDrawColor(ren, 255, 0, 0, 255); // Red
+            SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
             for (int i = 0; i < 4; ++i) {
                 SDL_FRect r = {
                     highlightRect.x + i,
@@ -207,7 +231,7 @@ namespace mortal_kombat
             }
         }
 
-        // Render Player 2 highlight (Yellow)
+        // Draw Player 2 highlight (yellow)
         {
             int row = selectedP2 / GRID_COLS;
             int col = selectedP2 % GRID_COLS;
@@ -219,7 +243,7 @@ namespace mortal_kombat
                 scaledBoxH
             };
 
-            SDL_SetRenderDrawColor(ren, 255, 255, 0, 255); // Yellow
+            SDL_SetRenderDrawColor(ren, 255, 255, 0, 255);
             for (int i = 0; i < 4; ++i) {
                 SDL_FRect r = {
                     highlightRect.x + i,
@@ -235,9 +259,10 @@ namespace mortal_kombat
         SDL_Delay(16);
     }
 
-    // Return the selected column index of each player (0 to 3)
+    // Return column index in each row (0–3)
     return {selectedP1 % GRID_COLS, selectedP2 % GRID_COLS};
 }
+
 
 
 
