@@ -32,6 +32,8 @@ namespace mortal_kombat
 
         createBoundary(LEFT);
         createBoundary(RIGHT);
+        initialScreen();  // Show intro splash before the game loop
+        auto [p1Index, p2Index] = chooseFighterScreen();
         bagel::Entity player1 = createPlayer(PLAYER_1_BASE_X, PLAYER_BASE_Y, Characters::SUBZERO, 1);
         bagel::Entity player2 = createPlayer(PLAYER_2_BASE_X, PLAYER_BASE_Y, Characters::LIU_KANG, 2);
 
@@ -244,8 +246,6 @@ namespace mortal_kombat
 
     void MK::run() const
     {
-        initialScreen();  // Show intro splash before the game loop
-        auto [p1Index, p2Index] = chooseFighterScreen();
         int frame_count = 0;
         while (true)
         {
