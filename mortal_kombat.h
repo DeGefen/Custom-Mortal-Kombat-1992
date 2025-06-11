@@ -36,6 +36,8 @@ namespace mortal_kombat
         /// @brief Destructor. Cleans up resources.
         ~MK() {destroy();}
 
+        void initialScreen() const;
+
         /// @brief Runs the main game loop.
         void run() const;
 

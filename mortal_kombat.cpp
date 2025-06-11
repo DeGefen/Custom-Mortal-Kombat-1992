@@ -64,10 +64,49 @@ namespace mortal_kombat
         SDL_Quit();
     }
 
+    void MK::initialScreen() const {
+        SDL_Texture* menuTexture = TextureSystem::getTexture(ren, "res/Menus&Text.png", TextureSystem::IgnoreColorKey::NAME_BAR);
+        if (!menuTexture) {
+            SDL_Log("Failed to load initial screen texture");
+            return;
+        }
+
+        // Define the area of the menu texture to show — adjust these values to match your design.
+        SDL_FRect srcRect = {2315, 1553, 392, 249}; // Example values — update as needed
+        SDL_FRect destRect = {
+            0.0f,
+            0.0f,
+            static_cast<float>(WINDOW_WIDTH),
+            static_cast<float>(WINDOW_HEIGHT)
+        };
+
+        SDL_Event event;
+        bool waitForKey = true;
+
+        while (waitForKey) {
+            SDL_PumpEvents();
+            while (SDL_PollEvent(&event)) {
+                if (event.type == SDL_EVENT_QUIT) {
+                    exit(0);
+                } else if (event.type == SDL_EVENT_KEY_DOWN) {
+                    waitForKey = false;
+                }
+            }
+
+            SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+            SDL_RenderClear(ren);
+            SDL_RenderTexture(ren, menuTexture, &srcRect, &destRect);
+            SDL_RenderPresent(ren);
+
+            SDL_Delay(16); // ~60 FPS
+        }
+    }
+
     // ------------------------------- Game Loop -------------------------------
 
     void MK::run() const
     {
+        initialScreen();  // Show intro splash before the game loop
         int frame_count = 0;
         while (true)
         {
