@@ -102,12 +102,12 @@ namespace mortal_kombat
         }
     }
 
-    void MK::chooseFighterScreen() const {
+    int MK::chooseFighterScreen() const {
     SDL_Texture* menuTexture = TextureSystem::getTexture(
         ren, "res/Menus&Text.png", TextureSystem::IgnoreColorKey::NAME_BAR);
     if (!menuTexture) {
         SDL_Log("Failed to load fighter selection screen");
-        return;
+        return - 1;
     }
 
     // Source area of the fighter selection box
@@ -204,6 +204,7 @@ namespace mortal_kombat
     }
 
     // Later, use `selected` to load the chosen fighter
+        return selected % GRID_COLS;
 }
 
 
@@ -216,7 +217,7 @@ namespace mortal_kombat
     void MK::run() const
     {
         initialScreen();  // Show intro splash before the game loop
-        chooseFighterScreen();
+        int figther = chooseFighterScreen();
         int frame_count = 0;
         while (true)
         {
