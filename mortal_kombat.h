@@ -93,7 +93,7 @@ namespace mortal_kombat
         static constexpr int templeW = 300;
         static constexpr int templeH = 245;
         // --------------------------------------------------------
-        static constexpr int numOfFighters = 4;
+        static constexpr int numOfFighters = 5;
 
 
         SDL_Renderer* ren{};
@@ -505,8 +505,20 @@ namespace mortal_kombat
                 .winText = WIN_SPRITE[CharacterType::LIU_KANG],
             };
 
-            constexpr static Character YANIV = {
-                .name = "Yaniv",
+            constexpr static Character MOSHE = {
+                .name = "Sub-Moshe",
+                .sprite = SUBZERO_SPRITE,
+                .specialAttackSprite = SUBZERO_SPECIAL_ATTACK_SPRITE,
+                .specialAttackOffset_y = 88,
+                .specialAttacks = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
+                            {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
+                .leftBarNameSource = { 5406, 173, 163, 12 },
+                .rightBarNameSource = { 5579, 173, 163, 12 },
+                .winText = WIN_SPRITE[CharacterType::SUBZERO],
+            };
+
+            constexpr static Character ITAMAR = {
+                .name = "Itamar-Fu",
                 .sprite = LIU_KANG_SPRITE,
                 .specialAttackSprite = LIU_SPECIAL_ATTACK_SPRITE,
                 .specialAttackOffset_y = 72,
@@ -515,6 +527,18 @@ namespace mortal_kombat
                 .leftBarNameSource = { 5406, 142, 163, 12 },
                 .rightBarNameSource = { 5579, 142, 163, 12 },
                 .winText = WIN_SPRITE[CharacterType::LIU_KANG],
+            };
+
+            constexpr static Character YANIV = {
+                .name = "Yaniv",
+                .sprite = SUBZERO_SPRITE,
+                .specialAttackSprite = SUBZERO_SPECIAL_ATTACK_SPRITE,
+                .specialAttackOffset_y = 88,
+                .specialAttacks = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
+                            {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
+                .leftBarNameSource = { 5406, 173, 163, 12 },
+                .rightBarNameSource = { 5579, 173, 163, 12 },
+                .winText = WIN_SPRITE[CharacterType::SUBZERO],
             };
 
             constexpr static Character GEFFEN = {
@@ -529,11 +553,24 @@ namespace mortal_kombat
                 .winText = WIN_SPRITE[CharacterType::LIU_KANG],
             };
 
+            constexpr static Character YONATAN = {
+                .name = "Yonatan",
+                .sprite = SUBZERO_SPRITE,
+                .specialAttackSprite = SUBZERO_SPECIAL_ATTACK_SPRITE,
+                .specialAttackOffset_y = 88,
+                .specialAttacks = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
+                            {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
+                .leftBarNameSource = { 5406, 173, 163, 12 },
+                .rightBarNameSource = { 5579, 173, 163, 12 },
+                .winText = WIN_SPRITE[CharacterType::SUBZERO],
+            };
+
             constexpr static std::array<Character, numOfFighters> ALL_CHARACTERS = {
-                Characters::SUBZERO,
-                Characters::LIU_KANG,
-                Characters::YANIV,
-                Characters::GEFFEN
+                MOSHE,
+                ITAMAR,
+                YANIV,
+                GEFFEN,
+                YONATAN
             };
         };
 

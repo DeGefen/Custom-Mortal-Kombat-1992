@@ -116,14 +116,15 @@ namespace mortal_kombat
     }
 
     // Load character images
-    SDL_Texture* characterTextures[4] = {
+    SDL_Texture* characterTextures[numOfFighters] = {
         TextureSystem::getTexture(ren, "res/moshe.jpeg", TextureSystem::IgnoreColorKey::CHARACTER),
         TextureSystem::getTexture(ren, "res/itamar.jpeg", TextureSystem::IgnoreColorKey::CHARACTER),
         TextureSystem::getTexture(ren, "res/yaniv.jpeg", TextureSystem::IgnoreColorKey::CHARACTER),
-        TextureSystem::getTexture(ren, "res/geffen.jpeg", TextureSystem::IgnoreColorKey::CHARACTER)
+        TextureSystem::getTexture(ren, "res/geffen.jpeg", TextureSystem::IgnoreColorKey::CHARACTER),
+        TextureSystem::getTexture(ren, "res/yonatan.jpeg", TextureSystem::IgnoreColorKey::CHARACTER)
     };
 
-    SDL_FRect srcRect = {900, 381, 256, 183};
+    SDL_FRect srcRect = {900, 381, 64*numOfFighters + 10, 183};
     SDL_FRect destRect = {
         0.0f,
         0.0f,
@@ -144,10 +145,10 @@ namespace mortal_kombat
     const float startX = boxX * scaleX;
     const float startY = boxY * scaleY;
 
-    constexpr int GRID_COLS = 4;
+    constexpr int GRID_COLS = numOfFighters;
 
-    int selectedP1 = 0;  // Top row (0-3)
-    int selectedP2 = 4;  // Bottom row (4-7, but we only have 4 characters)
+    int selectedP1 = 0;  // Top row (0 - numOfFighters-1)
+    int selectedP2 = numOfFighters;  // Bottom row (numOfFighters - 2numOfFighters-1)
 
     SDL_Event event;
     bool choosing = true;
@@ -259,7 +260,7 @@ namespace mortal_kombat
         SDL_Delay(16);
     }
 
-    // Return column index in each row (0–3)
+    // Return column index in each row
     return {selectedP1 % GRID_COLS, selectedP2 % GRID_COLS};
 }
 
