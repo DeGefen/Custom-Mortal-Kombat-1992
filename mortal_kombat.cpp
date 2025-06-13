@@ -117,11 +117,11 @@ namespace mortal_kombat
 
     // Load character images
     SDL_Texture* characterTextures[numOfFighters] = {
-        TextureSystem::getTexture(ren, "res/moshe.jpeg", TextureSystem::IgnoreColorKey::CHARACTER),
-        TextureSystem::getTexture(ren, "res/itamar.jpeg", TextureSystem::IgnoreColorKey::CHARACTER),
-        TextureSystem::getTexture(ren, "res/yaniv.jpeg", TextureSystem::IgnoreColorKey::CHARACTER),
-        TextureSystem::getTexture(ren, "res/geffen.jpeg", TextureSystem::IgnoreColorKey::CHARACTER),
-        TextureSystem::getTexture(ren, "res/yonatan.jpeg", TextureSystem::IgnoreColorKey::CHARACTER)
+        TextureSystem::getTexture(ren, "res/moshe_w_pic.png", TextureSystem::IgnoreColorKey::CHARACTER),
+        TextureSystem::getTexture(ren, "res/itamar_w_pic.png", TextureSystem::IgnoreColorKey::CHARACTER),
+        TextureSystem::getTexture(ren, "res/yaniv_w_pic.png", TextureSystem::IgnoreColorKey::CHARACTER),
+        TextureSystem::getTexture(ren, "res/geffen_w_pic.png", TextureSystem::IgnoreColorKey::CHARACTER),
+        TextureSystem::getTexture(ren, "res/yonatan_w_pic.png", TextureSystem::IgnoreColorKey::CHARACTER)
     };
 
     SDL_FRect srcRect = {900, 381, 64*numOfFighters + 10, 183};
