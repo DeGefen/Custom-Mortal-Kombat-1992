@@ -273,6 +273,37 @@ namespace mortal_kombat
 
     // ------------------------------- Game Loop -------------------------------
 
+    void MK::runWithRestartOption()
+    {
+        bool continuePlaying = true;
+
+        while (continuePlaying)
+        {
+            run();
+
+            // Wait for user input after match ends
+            SDL_Event event;
+            bool waiting = true;
+            while (waiting) {
+                while (SDL_PollEvent(&event)) {
+                    if (event.type == SDL_EVENT_QUIT) {
+                        continuePlaying = false;
+                        waiting = false;
+                    } else if (event.type == SDL_EVENT_KEY_DOWN) {
+                        if (event.key.key == SDLK_ESCAPE) {
+                            continuePlaying = false;
+                        } else {
+                            destroy();
+                            start();
+                        }
+                        waiting = false;
+                    }
+                }
+                SDL_Delay(100);
+            }
+        }
+    }
+
     void MK::run() const
     {
         int frame_count = 0;
@@ -283,7 +314,7 @@ namespace mortal_kombat
             // Detect match end
             if (isGameOver()) {
                 // Leave the game to run for a few seconds in order to see the winning animation
-                for (int i = 0; i < 100; i++) {
+                for (int i = 0; i < 200; i++) {
                     gameIteration(frame_count);
                 }
                 matchOver = true;
