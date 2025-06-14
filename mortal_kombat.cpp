@@ -120,7 +120,7 @@ namespace mortal_kombat
         TextureSystem::getTexture(ren, "res/moshe_w_pic.png", TextureSystem::IgnoreColorKey::CHARACTER),
         TextureSystem::getTexture(ren, "res/itamar_w_pic.png", TextureSystem::IgnoreColorKey::CHARACTER),
         TextureSystem::getTexture(ren, "res/yaniv_w_pic.png", TextureSystem::IgnoreColorKey::CHARACTER),
-        TextureSystem::getTexture(ren, "res/geffen_w_pic.png", TextureSystem::IgnoreColorKey::CHARACTER),
+        TextureSystem::getTexture(ren, "res/gefen_w_pic.png", TextureSystem::IgnoreColorKey::CHARACTER),
         TextureSystem::getTexture(ren, "res/yonatan_w_pic.png", TextureSystem::IgnoreColorKey::CHARACTER)
     };
 
@@ -416,7 +416,7 @@ namespace mortal_kombat
                                 playerState.state == State::ROLL ||
                                 playerState.state == State::JUMP_PUNCH ||
                                 playerState.state == State::JUMP_HIGH_KICK ||
-                                playerState.state == State::JUMP_LOW_KICK)
+                                playerState.state == State::JUMP_KICK)
                             {
                                 playerState.reset();
                                 playerState.state = State::LANDING;
@@ -605,23 +605,10 @@ namespace mortal_kombat
                 }
             }
 
-            if (inputs == Inputs::JUMP_PUNCH)
+            if (inputs == Inputs::JUMP_LOW_KICK
+                || inputs == Inputs::JUMP_HIGH_KICK)
             {
-                state = State::JUMP_PUNCH;
-                freezeFrame = character.sprite[state].frameCount - 1;
-                attack = true;
-                jumping = true;
-            }
-            else if (inputs == Inputs::JUMP_LOW_KICK)
-            {
-                state = State::JUMP_LOW_KICK;
-                freezeFrame = character.sprite[state].frameCount - 1;
-                attack = true;
-                jumping = true;
-            }
-            else if (inputs == Inputs::JUMP_HIGH_KICK)
-            {
-                state = State::JUMP_HIGH_KICK;
+                state = State::JUMP_KICK;
                 freezeFrame = character.sprite[state].frameCount - 1;
                 attack = true;
                 jumping = true;
@@ -638,12 +625,6 @@ namespace mortal_kombat
                 state = State::BLOCK;
                 freezeFrame = character.sprite[state].frameCount / 2 + 1;
                 freezeFrameDuration = 1;
-            }
-            else if (inputs == Inputs::CROUCH_KICK)
-            {
-                state = State::CROUCH_KICK;
-                crouching = true;
-                attack = true;
             }
             else if (inputs == Inputs::JUMP_BACK_RIGHT
                     || inputs == Inputs::JUMP_BACK_LEFT)
@@ -751,7 +732,7 @@ namespace mortal_kombat
                 if (playerState.busyFrames - 1 <= playerState.currFrame && playerState.freezeFrameDuration <= 0)
                     playerState.busy = false;
 
-                if (playerState.isLaying && !playerState.busy)
+                if (playerState.isLaying && !playerState.busy && !playerState.isJumping)
                 {
                     playerState.reset();
                     playerState.state = State::GETUP;
@@ -822,7 +803,7 @@ namespace mortal_kombat
                 createWinText(winner.get<Character>());
                 bool isJumping = loser.get<PlayerState>().isJumping;
                 loser.get<PlayerState>().reset();
-                loser.get<PlayerState>().state = State::GIDDY_FALL;
+                loser.get<PlayerState>().state = State::DIE;
                 loser.get<PlayerState>().busy = true;
                 loser.get<PlayerState>().isJumping = isJumping;
                 loser.get<PlayerState>().busyFrames = loser.get<Character>().sprite[loser.get<PlayerState>().state].frameCount;
@@ -839,9 +820,9 @@ namespace mortal_kombat
                 winner.get<PlayerState>().freezeFrameDuration = 1000;
             };
 
-            if (p1Health.health <= 0 && p1State.state != State::GIDDY_FALL)
+            if (p1Health.health <= 0 && p1State.state != State::DIE)
                 handleWinLose(player1, player2);
-            if (p2Health.health <= 0 && p2State.state != State::GIDDY_FALL)
+            if (p2Health.health <= 0 && p2State.state != State::DIE)
                 handleWinLose(player2, player1);
 
             // Direction update
@@ -852,7 +833,7 @@ namespace mortal_kombat
                 if (!state.isJumping && !state.busy && state.direction != newDir) {
                     state.direction = newDir;
                     state.reset();
-                    state.state = State::TURN_LEFT_TO_RIGHT;
+                    state.state = State::TURN;
                     state.busy = true;
                     state.busyFrames = character.sprite[state.state].frameCount;
                 }
@@ -1091,7 +1072,7 @@ namespace mortal_kombat
             case State::HIGH_KICK:
             case State::JUMP_HIGH_KICK:
             case State::JUMP_PUNCH:
-            case State::JUMP_LOW_KICK:
+            case State::JUMP_KICK:
                 health.health -= 8;
                 playerState.reset();
                 if (isJumping)
@@ -1424,10 +1405,7 @@ namespace mortal_kombat
 
             switch (type)
             {
-                case State::FORWARD_JUMP_PUNCH:
-                case State::JUMP_PUNCH:
-                case State::JUMP_LOW_KICK:
-                case State::JUMP_HIGH_KICK:
+                case State::JUMP_KICK:
                 case State::LOW_PUNCH:
                 case State::HIGH_PUNCH:
                     width = 70.0f;
@@ -1578,21 +1556,21 @@ namespace mortal_kombat
             Position{0, 0},
             Texture{
                 texture,
-                { fenceX, fenceY, fenceW, fenceH }, // Only show the red/black part
-                { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT / 1.3f} // Stretch or place as needed
+                { 0, 0, 800, 600 }, // Only show the red/black part
+                { 0, 0, 800, 600} // Stretch or place as needed
             }
         );
-
-        // Create temple
-        bagel::Entity temple = bagel::Entity::create();
-        temple.addAll(
-            Position{0, 0},
-            Texture{
-                texture,
-                { templeX, templeY, templeW, templeH }, // Only show the red/black part
-                { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT } // Stretch to fit window
-            }
-        );
+        //
+        // // Create temple
+        // bagel::Entity temple = bagel::Entity::create();
+        // temple.addAll(
+        //     Position{0, 0},
+        //     Texture{
+        //         texture,
+        //         { templeX, templeY, templeW, templeH }, // Only show the red/black part
+        //         { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT } // Stretch to fit window
+        //     }
+        // );
     }
 
     void MK::createBar(bagel::Entity player1, bagel::Entity player2) const

@@ -54,7 +54,7 @@ namespace mortal_kombat
         static constexpr float	BOX2D_STEP = 1.f/FPS;
 
         static constexpr Uint32 FRAME_DELAY = 1000 / FPS;
-        static constexpr Uint32 ACTION_FRAME_DELAY = 4;
+        static constexpr Uint32 ACTION_FRAME_DELAY = 2;
         static constexpr Uint32 INPUT_FRAME_DELAY = 2;
 
         static constexpr int WINDOW_WIDTH = 800.0f;
@@ -67,16 +67,16 @@ namespace mortal_kombat
         static constexpr float CHARACTER_WIDTH = 50;
         static constexpr float CHARACTER_HEIGHT = 135;
 
-        static constexpr int CHAR_SQUARE_WIDTH = 230;
-        static constexpr int CHAR_SQUARE_HEIGHT = 220;
-        static constexpr int NEXT_FRAME_OFFSET = 4;
+        static constexpr int CHAR_SQUARE_WIDTH = 196;
+        static constexpr int CHAR_SQUARE_HEIGHT = 196;
+        static constexpr int NEXT_FRAME_OFFSET = 0;
         static constexpr int SHADOW_OFFSET = 8;
 
         static constexpr int NONE = -1;
 
         static constexpr int PLAYER_1_BASE_X = WINDOW_WIDTH / 4 - (CHAR_SQUARE_WIDTH / 2) - 100;
         static constexpr int PLAYER_2_BASE_X = (WINDOW_WIDTH / 4) * 3 - (CHAR_SQUARE_WIDTH / 2);
-        static constexpr int PLAYER_BASE_Y = WINDOW_HEIGHT / 2.0f - 20;
+        static constexpr int PLAYER_BASE_Y = WINDOW_HEIGHT / 2.0f - CHAR_SQUARE_HEIGHT / 2.0f + 18;
 
         static constexpr bool LEFT = true;
         static constexpr bool RIGHT = false;
@@ -187,7 +187,6 @@ namespace mortal_kombat
             static constexpr Input RESET = 0;
 
             static constexpr Input UPPERCUT = Inputs::DOWN | Inputs::HIGH_PUNCH;
-            static constexpr Input CROUCH_KICK = Inputs::DOWN | Inputs::LOW_KICK;
             static constexpr Input LOW_SWEEP_KICK_RIGHT = Inputs::LEFT | Inputs::LOW_KICK | Inputs::DIRECTION_RIGHT;
             static constexpr Input LOW_SWEEP_KICK_LEFT = Inputs::RIGHT | Inputs::LOW_KICK | Inputs::DIRECTION_LEFT;
             static constexpr Input HIGH_SWEEP_KICK_RIGHT = Inputs::LEFT | Inputs::HIGH_KICK | Inputs::DIRECTION_RIGHT;
@@ -197,7 +196,6 @@ namespace mortal_kombat
             static constexpr Input WALK_FORWARDS_LEFT = Inputs::LEFT | Inputs::DIRECTION_LEFT;
             static constexpr Input WALK_BACKWARDS_RIGHT = Inputs::LEFT | Inputs::DIRECTION_RIGHT;
             static constexpr Input WALK_BACKWARDS_LEFT = Inputs::RIGHT | Inputs::DIRECTION_LEFT;
-            static constexpr Input JUMP_PUNCH = Inputs::LOW_PUNCH | Inputs::JUMPING;
             static constexpr Input JUMP_HIGH_KICK = Inputs::HIGH_KICK | Inputs::JUMPING;
             static constexpr Input JUMP_LOW_KICK = Inputs::LOW_KICK | Inputs::JUMPING;
             static constexpr Input JUMP_BACK_RIGHT = Inputs::UP | Inputs::LEFT | Inputs::DIRECTION_RIGHT;
@@ -401,9 +399,9 @@ namespace mortal_kombat
                 textureCache.clear();
             }
         private:
-            static constexpr Uint8 CHARACTER_COLOR_IGNORE_RED = 165;
-            static constexpr Uint8 CHARACTER_COLOR_IGNORE_GREEN = 231;
-            static constexpr Uint8 CHARACTER_COLOR_IGNORE_BLUE = 255;
+            static constexpr Uint8 CHARACTER_COLOR_IGNORE_RED = 65;
+            static constexpr Uint8 CHARACTER_COLOR_IGNORE_GREEN = 180;
+            static constexpr Uint8 CHARACTER_COLOR_IGNORE_BLUE = 131;
 
             static constexpr Uint8 BACKGROUND_COLOR_IGNORE_RED = 252;
             static constexpr Uint8 BACKGROUND_COLOR_IGNORE_GREEN = 0;
@@ -481,34 +479,10 @@ namespace mortal_kombat
          */
         struct Characters
         {
-            constexpr static Character SUBZERO = {
-                .name = "Sub-Zero",
-                .sprite = SUBZERO_SPRITE,
-                .specialAttackSprite = SUBZERO_SPECIAL_ATTACK_SPRITE,
-                .specialAttackOffset_y = 88,
-                .specialAttacks = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
-                            {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
-                .leftBarNameSource = { 5406, 173, 163, 12 },
-                .rightBarNameSource = { 5579, 173, 163, 12 },
-                .winText = WIN_SPRITE[CharacterType::SUBZERO],
-            };
-
-            constexpr static Character LIU_KANG = {
-                .name = "Liu Kang",
-                .sprite = LIU_KANG_SPRITE,
-                .specialAttackSprite = LIU_SPECIAL_ATTACK_SPRITE,
-                .specialAttackOffset_y = 72,
-                .specialAttacks = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
-                        {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
-                .leftBarNameSource = { 5406, 142, 163, 12 },
-                .rightBarNameSource = { 5579, 142, 163, 12 },
-                .winText = WIN_SPRITE[CharacterType::LIU_KANG],
-            };
-
             constexpr static Character MOSHE = {
-                .name = "Sub-Moshe",
-                .sprite = SUBZERO_SPRITE,
-                .specialAttackSprite = SUBZERO_SPECIAL_ATTACK_SPRITE,
+                .name = "Moshe",
+                .sprite = MOSHE_SPRITE,
+                .specialAttackSprite = MOSHE_SPECIAL_ATTACK_SPRITE,
                 .specialAttackOffset_y = 88,
                 .specialAttacks = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
                             {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
@@ -518,9 +492,9 @@ namespace mortal_kombat
             };
 
             constexpr static Character ITAMAR = {
-                .name = "Itamar-Fu",
-                .sprite = LIU_KANG_SPRITE,
-                .specialAttackSprite = LIU_SPECIAL_ATTACK_SPRITE,
+                .name = "Itamar",
+                .sprite = ITAMAR_SPRITE,
+                .specialAttackSprite = ITAMAR_SPECIAL_ATTACK_SPRITE,
                 .specialAttackOffset_y = 72,
                 .specialAttacks = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
                         {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
@@ -531,8 +505,8 @@ namespace mortal_kombat
 
             constexpr static Character YANIV = {
                 .name = "Yaniv",
-                .sprite = SUBZERO_SPRITE,
-                .specialAttackSprite = SUBZERO_SPECIAL_ATTACK_SPRITE,
+                .sprite = YANIV_SPRITE,
+                .specialAttackSprite = YANIV_SPECIAL_ATTACK_SPRITE,
                 .specialAttackOffset_y = 88,
                 .specialAttacks = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
                             {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
@@ -541,10 +515,10 @@ namespace mortal_kombat
                 .winText = WIN_SPRITE[CharacterType::YANIV],
             };
 
-            constexpr static Character GEFFEN = {
-                .name = "Geffen",
-                .sprite = LIU_KANG_SPRITE,
-                .specialAttackSprite = LIU_SPECIAL_ATTACK_SPRITE,
+            constexpr static Character GEFEN = {
+                .name = "Gefen",
+                .sprite = GEFEN_SPRITE,
+                .specialAttackSprite = GEFEN_SPECIAL_ATTACK_SPRITE,
                 .specialAttackOffset_y = 72,
                 .specialAttacks = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
                         {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
@@ -554,9 +528,9 @@ namespace mortal_kombat
             };
 
             constexpr static Character YONATAN = {
-                .name = "Yonatan",
-                .sprite = SUBZERO_SPRITE,
-                .specialAttackSprite = SUBZERO_SPECIAL_ATTACK_SPRITE,
+                .name = "MOSHE",
+                .sprite = MOSHE_SPRITE,
+                .specialAttackSprite = MOSHE_SPECIAL_ATTACK_SPRITE,
                 .specialAttackOffset_y = 88,
                 .specialAttacks = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
                             {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
@@ -569,7 +543,7 @@ namespace mortal_kombat
                 MOSHE,
                 ITAMAR,
                 YANIV,
-                GEFFEN,
+                GEFEN,
                 YONATAN
             };
         };
