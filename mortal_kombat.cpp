@@ -275,58 +275,53 @@ namespace mortal_kombat
 
     void MK::run() const
     {
-        bool matchOver = false;
         int frame_count = 0;
+        bool matchOver = false;
         while (!matchOver)
         {
-            Uint32 frameStart = SDL_GetTicks();
-
-            if (frame_count % INPUT_FRAME_DELAY == 0) InputSystem();
-            if (++frame_count % ACTION_FRAME_DELAY == 0) PlayerSystem();
-            ClockSystem();
-            CollisionSystem();
-            SpecialAttackSystem();
-            MovementSystem();
-            RenderSystem();
-            HealthBarSystem();
-            AttackDecaySystem();
-
+            gameIteration(frame_count);
             // Detect match end
-            int deadOrWinning = 0;
-            for (bagel::ent_type e = {0}; e.id <= bagel::World::maxId().id; ++e.id) {
-                if (bagel::Entity entity{e}; entity.has<PlayerState>()) {
-                    auto& state = entity.get<PlayerState>();
-                    if (state.state == State::WIN || state.state == State::DIE)
-                        ++deadOrWinning;
-                }
-            }
-            if (deadOrWinning >= 2) {
+            if (isGameOver()) {
+                // Leave the game to run for a few seconds in order to see the winning animation
                 for (int i = 0; i < 100; i++) {
-                    Uint32 frameStart = SDL_GetTicks();
-
-                    if (frame_count % INPUT_FRAME_DELAY == 0) InputSystem();
-                    if (++frame_count % ACTION_FRAME_DELAY == 0) PlayerSystem();
-                    ClockSystem();
-                    CollisionSystem();
-                    SpecialAttackSystem();
-                    MovementSystem();
-                    RenderSystem();
-                    HealthBarSystem();
-                    AttackDecaySystem();
-                    if (Uint32 frameTime = SDL_GetTicks() - frameStart; FRAME_DELAY > frameTime) {
-                        SDL_Delay(FRAME_DELAY - frameTime);
-                    }
+                    gameIteration(frame_count);
                 }
-
                 matchOver = true;
-            }
-
-            if (Uint32 frameTime = SDL_GetTicks() - frameStart; FRAME_DELAY > frameTime) {
-                SDL_Delay(FRAME_DELAY - frameTime);
             }
         }
     }
 
+    void MK::gameIteration(int& frame_count) const {
+
+        Uint32 frameStart = SDL_GetTicks();
+
+        if (frame_count % INPUT_FRAME_DELAY == 0) InputSystem();
+        if (++frame_count % ACTION_FRAME_DELAY == 0) PlayerSystem();
+        ClockSystem();
+        CollisionSystem();
+        SpecialAttackSystem();
+        MovementSystem();
+        RenderSystem();
+        HealthBarSystem();
+        AttackDecaySystem();
+
+        if (Uint32 frameTime = SDL_GetTicks() - frameStart; FRAME_DELAY > frameTime) {
+            SDL_Delay(FRAME_DELAY - frameTime);
+        }
+    }
+
+    bool MK::isGameOver() const {
+        int deadOrWinning = 0;
+        for (bagel::ent_type e = {0}; e.id <= bagel::World::maxId().id; ++e.id) {
+            if (bagel::Entity entity{e}; entity.has<PlayerState>()) {
+                auto& state = entity.get<PlayerState>();
+                if (state.state == State::WIN || state.state == State::DIE)
+                    ++deadOrWinning;
+            }
+        }
+
+        return deadOrWinning >= 2;
+    }
     // ------------------------------- Systems -------------------------------
 
     void MK::MovementSystem()

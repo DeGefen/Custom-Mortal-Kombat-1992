@@ -41,6 +41,8 @@ namespace mortal_kombat
 
         /// @brief Runs the main game loop.
         void run() const;
+        void gameIteration(int& frame_count) const;
+        bool isGameOver() const;
 
         /// @brief Initializes the game.
         void start();
