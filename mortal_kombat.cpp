@@ -70,14 +70,14 @@ namespace mortal_kombat
     }
 
     void MK::initialScreen() const {
-        SDL_Texture* menuTexture = TextureSystem::getTexture(ren, "res/Menus&Text.png", TextureSystem::IgnoreColorKey::NAME_BAR);
+        SDL_Texture* menuTexture = TextureSystem::getTexture(ren, "res/mortal-akademit.png", TextureSystem::IgnoreColorKey::NAME_BAR);
         if (!menuTexture) {
             SDL_Log("Failed to load initial screen texture");
             return;
         }
 
         // Define the area of the menu texture to show — adjust these values to match your design.
-        SDL_FRect srcRect = {2315, 1553, 392, 249}; // Example values — update as needed
+        SDL_FRect srcRect = {0, 0, 1020, 1024}; // Example values — update as needed
         SDL_FRect destRect = {
             0.0f,
             0.0f,
@@ -266,13 +266,13 @@ namespace mortal_kombat
 
     void MK::closingScreen() const
     {
-        SDL_Texture* menuTexture = IMG_LoadTexture(ren, "res/Menus&Text.png");
+        SDL_Texture* menuTexture = IMG_LoadTexture(ren, "res/gameover.png");
         if (!menuTexture) {
-            SDL_Log("Failed to load Menus&Text.png: %s", SDL_GetError());
+            SDL_Log("Failed to load gameover.png: %s", SDL_GetError());
             return;
         }
 
-        SDL_FRect srcRect = { 4010, 1553, 399, 251 };
+        SDL_FRect srcRect = { 0, 0, 1024, 1024 };
         SDL_FRect destRect = {
             0.0f,
             0.0f,
