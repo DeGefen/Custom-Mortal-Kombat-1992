@@ -264,6 +264,30 @@ namespace mortal_kombat
     return {selectedP1 % GRID_COLS, selectedP2 % GRID_COLS};
 }
 
+    void MK::closingScreen() const
+    {
+        SDL_Texture* menuTexture = IMG_LoadTexture(ren, "res/Menus&Text.png");
+        if (!menuTexture) {
+            SDL_Log("Failed to load Menus&Text.png: %s", SDL_GetError());
+            return;
+        }
+
+        SDL_FRect srcRect = { 4010, 1553, 399, 251 };
+        SDL_FRect destRect = {
+            0.0f,
+            0.0f,
+            static_cast<float>(WINDOW_WIDTH),
+            static_cast<float>(WINDOW_HEIGHT)
+        };
+
+        SDL_RenderClear(ren);
+        SDL_RenderTexture(ren, menuTexture, &srcRect, &destRect);
+        SDL_RenderPresent(ren);
+
+        SDL_DestroyTexture(menuTexture);
+    }
+
+
 
 
 
@@ -280,7 +304,7 @@ namespace mortal_kombat
         while (continuePlaying)
         {
             run();
-
+            closingScreen();
             // Wait for user input after match ends
             SDL_Event event;
             bool waiting = true;

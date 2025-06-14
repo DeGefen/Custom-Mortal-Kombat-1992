@@ -38,6 +38,7 @@ namespace mortal_kombat
 
         void initialScreen() const;
         std::pair<int, int> chooseFighterScreen() const;
+        void closingScreen() const;
 
         /// @brief Runs the main game loop.
         void run() const;
