@@ -32,8 +32,13 @@ namespace mortal_kombat
 
         createBoundary(LEFT);
         createBoundary(RIGHT);
-        bagel::Entity player1 = createPlayer(PLAYER_1_BASE_X, PLAYER_BASE_Y, Characters::SUBZERO, 1);
-        bagel::Entity player2 = createPlayer(PLAYER_2_BASE_X, PLAYER_BASE_Y, Characters::LIU_KANG, 2);
+        initialScreen();  // Show intro splash before the game loop
+        auto [p1Index, p2Index] = chooseFighterScreen();
+        Character character1 = Characters::ALL_CHARACTERS[p1Index];
+        Character character2 = Characters::ALL_CHARACTERS[p2Index];
+
+        bagel::Entity player1 = createPlayer(PLAYER_1_BASE_X, PLAYER_BASE_Y, character1, 1);
+        bagel::Entity player2 = createPlayer(PLAYER_2_BASE_X, PLAYER_BASE_Y, character2, 2);
 
         createBar(player1, player2);
     }
@@ -64,31 +69,314 @@ namespace mortal_kombat
         SDL_Quit();
     }
 
+    void MK::initialScreen() const {
+        SDL_Texture* menuTexture = TextureSystem::getTexture(ren, "res/mortal-akademit.png", TextureSystem::IgnoreColorKey::NAME_BAR);
+        if (!menuTexture) {
+            SDL_Log("Failed to load initial screen texture");
+            return;
+        }
+
+        // Define the area of the menu texture to show — adjust these values to match your design.
+        SDL_FRect srcRect = {0, 0, 1020, 1024}; // Example values — update as needed
+        SDL_FRect destRect = {
+            0.0f,
+            0.0f,
+            static_cast<float>(WINDOW_WIDTH),
+            static_cast<float>(WINDOW_HEIGHT)
+        };
+
+        SDL_Event event;
+        bool waitForKey = true;
+
+        while (waitForKey) {
+            SDL_PumpEvents();
+            while (SDL_PollEvent(&event)) {
+                if (event.type == SDL_EVENT_QUIT) {
+                    exit(0);
+                } else if (event.type == SDL_EVENT_KEY_DOWN) {
+                    waitForKey = false;
+                }
+            }
+
+            SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+            SDL_RenderClear(ren);
+            SDL_RenderTexture(ren, menuTexture, &srcRect, &destRect);
+            SDL_RenderPresent(ren);
+
+            SDL_Delay(16); // ~60 FPS
+        }
+    }
+
+    std::pair<int, int> MK::chooseFighterScreen() const {
+    SDL_Texture* menuTexture = TextureSystem::getTexture(
+        ren, "res/Menus&Text.png", TextureSystem::IgnoreColorKey::NAME_BAR);
+    if (!menuTexture) {
+        SDL_Log("Failed to load fighter selection screen");
+        return {-1, -1};
+    }
+
+    // Load character images
+    SDL_Texture* characterTextures[numOfFighters] = {
+        TextureSystem::getTexture(ren, "res/moshe_w_pic.png", TextureSystem::IgnoreColorKey::CHARACTER),
+        TextureSystem::getTexture(ren, "res/itamar_w_pic.png", TextureSystem::IgnoreColorKey::CHARACTER),
+        TextureSystem::getTexture(ren, "res/yaniv_w_pic.png", TextureSystem::IgnoreColorKey::CHARACTER),
+        TextureSystem::getTexture(ren, "res/gefen_w_pic.png", TextureSystem::IgnoreColorKey::CHARACTER),
+        TextureSystem::getTexture(ren, "res/yonatan_w_pic.png", TextureSystem::IgnoreColorKey::CHARACTER)
+    };
+
+    SDL_FRect srcRect = {900, 381, 64*numOfFighters + 10, 183};
+    SDL_FRect destRect = {
+        0.0f,
+        0.0f,
+        static_cast<float>(WINDOW_WIDTH),
+        static_cast<float>(WINDOW_HEIGHT)
+    };
+
+    const float boxX = 903.0f - 900.0f;
+    const float boxY = 409.0f - 381.0f;
+    const float boxW = 65.0f;
+    const float boxH = 80.0f;
+
+    const float scaleX = destRect.w / srcRect.w;
+    const float scaleY = destRect.h / srcRect.h;
+
+    const float scaledBoxW = boxW * scaleX;
+    const float scaledBoxH = boxH * scaleY;
+    const float startX = boxX * scaleX;
+    const float startY = boxY * scaleY;
+
+    constexpr int GRID_COLS = numOfFighters;
+
+    int selectedP1 = 0;  // Top row (0 - numOfFighters-1)
+    int selectedP2 = numOfFighters;  // Bottom row (numOfFighters - 2numOfFighters-1)
+
+    SDL_Event event;
+    bool choosing = true;
+
+    while (choosing) {
+        SDL_PumpEvents();
+        while (SDL_PollEvent(&event)) {
+            if (event.type == SDL_EVENT_QUIT) exit(0);
+            else if (event.type == SDL_EVENT_KEY_DOWN) {
+                switch (event.key.key) {
+                    case SDLK_LEFT:
+                        if (selectedP1 % GRID_COLS > 0) selectedP1--;
+                        break;
+                    case SDLK_RIGHT:
+                        if (selectedP1 % GRID_COLS < GRID_COLS - 1) selectedP1++;
+                        break;
+                    case SDLK_A:
+                        if (selectedP2 % GRID_COLS > 0) selectedP2--;
+                        break;
+                    case SDLK_D:
+                        if (selectedP2 % GRID_COLS < GRID_COLS - 1) selectedP2++;
+                        break;
+                    case SDLK_RETURN:
+                    case SDLK_KP_ENTER:
+                        choosing = false;
+                        break;
+                    case SDLK_ESCAPE:
+                        exit(0);
+                }
+            }
+        }
+
+        SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
+        SDL_RenderClear(ren);
+        SDL_RenderTexture(ren, menuTexture, &srcRect, &destRect);
+
+        // Draw character textures in grid
+        for (int i = 0; i < numOfFighters; ++i) {
+            int col = i % GRID_COLS;
+
+            // Top row (Player 1)
+            SDL_FRect dstTop = {
+                startX + col * scaledBoxW,
+                startY + 0 * scaledBoxH,  // row 0
+                scaledBoxW,
+                scaledBoxH
+            };
+            SDL_RenderTexture(ren, characterTextures[i], nullptr, &dstTop);
+
+            // Bottom row (Player 2)
+            SDL_FRect dstBottom = {
+                startX + col * scaledBoxW,
+                startY + 1 * scaledBoxH,  // row 1
+                scaledBoxW,
+                scaledBoxH
+            };
+            SDL_RenderTexture(ren, characterTextures[i], nullptr, &dstBottom);
+        }
+
+        // Draw Player 1 highlight (red)
+        {
+            int row = selectedP1 / GRID_COLS;
+            int col = selectedP1 % GRID_COLS;
+
+            SDL_FRect highlightRect = {
+                startX + col * scaledBoxW,
+                startY + row * scaledBoxH,
+                scaledBoxW,
+                scaledBoxH
+            };
+
+            SDL_SetRenderDrawColor(ren, 255, 0, 0, 255);
+            for (int i = 0; i < 4; ++i) {
+                SDL_FRect r = {
+                    highlightRect.x + i,
+                    highlightRect.y + i,
+                    highlightRect.w - 2 * i,
+                    highlightRect.h - 2 * i
+                };
+                SDL_RenderRect(ren, &r);
+            }
+        }
+
+        // Draw Player 2 highlight (yellow)
+        {
+            int row = selectedP2 / GRID_COLS;
+            int col = selectedP2 % GRID_COLS;
+
+            SDL_FRect highlightRect = {
+                startX + col * scaledBoxW,
+                startY + row * scaledBoxH,
+                scaledBoxW,
+                scaledBoxH
+            };
+
+            SDL_SetRenderDrawColor(ren, 255, 255, 0, 255);
+            for (int i = 0; i < 4; ++i) {
+                SDL_FRect r = {
+                    highlightRect.x + i,
+                    highlightRect.y + i,
+                    highlightRect.w - 2 * i,
+                    highlightRect.h - 2 * i
+                };
+                SDL_RenderRect(ren, &r);
+            }
+        }
+
+        SDL_RenderPresent(ren);
+        SDL_Delay(16);
+    }
+
+    // Return column index in each row
+    return {selectedP1 % GRID_COLS, selectedP2 % GRID_COLS};
+}
+
+    void MK::closingScreen() const
+    {
+        SDL_Texture* menuTexture = IMG_LoadTexture(ren, "res/gameover.png");
+        if (!menuTexture) {
+            SDL_Log("Failed to load gameover.png: %s", SDL_GetError());
+            return;
+        }
+
+        SDL_FRect srcRect = { 0, 0, 1024, 1024 };
+        SDL_FRect destRect = {
+            0.0f,
+            0.0f,
+            static_cast<float>(WINDOW_WIDTH),
+            static_cast<float>(WINDOW_HEIGHT)
+        };
+
+        SDL_RenderClear(ren);
+        SDL_RenderTexture(ren, menuTexture, &srcRect, &destRect);
+        SDL_RenderPresent(ren);
+
+        SDL_DestroyTexture(menuTexture);
+    }
+
+
+
+
+
+
+
+
+
     // ------------------------------- Game Loop -------------------------------
 
-    void MK::run() const
+    void MK::runWithRestartOption()
     {
-        int frame_count = 0;
-        while (true)
+        bool continuePlaying = true;
+
+        while (continuePlaying)
         {
-            Uint32 frameStart = SDL_GetTicks();
-
-            if (frame_count % INPUT_FRAME_DELAY == 0) InputSystem();
-            if (++frame_count % ACTION_FRAME_DELAY == 0) PlayerSystem();
-            ClockSystem();
-            CollisionSystem();
-            SpecialAttackSystem();
-            MovementSystem();
-            RenderSystem();
-            HealthBarSystem();
-            AttackDecaySystem();
-
-            if (Uint32 frameTime = SDL_GetTicks() - frameStart; FRAME_DELAY > frameTime) {
-                SDL_Delay(FRAME_DELAY - frameTime);
+            run();
+            closingScreen();
+            // Wait for user input after match ends
+            SDL_Event event;
+            bool waiting = true;
+            while (waiting) {
+                while (SDL_PollEvent(&event)) {
+                    if (event.type == SDL_EVENT_QUIT) {
+                        continuePlaying = false;
+                        waiting = false;
+                    } else if (event.type == SDL_EVENT_KEY_DOWN) {
+                        if (event.key.key == SDLK_ESCAPE) {
+                            continuePlaying = false;
+                        } else {
+                            destroy();
+                            start();
+                        }
+                        waiting = false;
+                    }
+                }
+                SDL_Delay(100);
             }
         }
     }
 
+    void MK::run() const
+    {
+        int frame_count = 0;
+        bool matchOver = false;
+        while (!matchOver)
+        {
+            gameIteration(frame_count);
+            // Detect match end
+            if (isGameOver()) {
+                // Leave the game to run for a few seconds in order to see the winning animation
+                for (int i = 0; i < 200; i++) {
+                    gameIteration(frame_count);
+                }
+                matchOver = true;
+            }
+        }
+    }
+
+    void MK::gameIteration(int& frame_count) const {
+
+        Uint32 frameStart = SDL_GetTicks();
+
+        if (frame_count % INPUT_FRAME_DELAY == 0) InputSystem();
+        if (++frame_count % ACTION_FRAME_DELAY == 0) PlayerSystem();
+        ClockSystem();
+        CollisionSystem();
+        SpecialAttackSystem();
+        MovementSystem();
+        RenderSystem();
+        HealthBarSystem();
+        AttackDecaySystem();
+
+        if (Uint32 frameTime = SDL_GetTicks() - frameStart; FRAME_DELAY > frameTime) {
+            SDL_Delay(FRAME_DELAY - frameTime);
+        }
+    }
+
+    bool MK::isGameOver() const {
+        int deadOrWinning = 0;
+        for (bagel::ent_type e = {0}; e.id <= bagel::World::maxId().id; ++e.id) {
+            if (bagel::Entity entity{e}; entity.has<PlayerState>()) {
+                auto& state = entity.get<PlayerState>();
+                if (state.state == State::WIN || state.state == State::DIE)
+                    ++deadOrWinning;
+            }
+        }
+
+        return deadOrWinning >= 2;
+    }
     // ------------------------------- Systems -------------------------------
 
     void MK::MovementSystem()
@@ -209,7 +497,7 @@ namespace mortal_kombat
                                 playerState.state == State::ROLL ||
                                 playerState.state == State::JUMP_PUNCH ||
                                 playerState.state == State::JUMP_HIGH_KICK ||
-                                playerState.state == State::JUMP_LOW_KICK)
+                                playerState.state == State::JUMP_KICK)
                             {
                                 playerState.reset();
                                 playerState.state = State::LANDING;
@@ -251,92 +539,106 @@ namespace mortal_kombat
     }
 
     void MK::RenderSystem() const
-    {
-        static const bagel::Mask mask = bagel::MaskBuilder()
-            .set<Position>()
-            .set<Texture>()
-            .build();
+{
+    static const bagel::Mask mask = bagel::MaskBuilder()
+        .set<Position>()
+        .set<Texture>()
+        .build();
 
-        static const bagel::Mask maskPlayer = bagel::MaskBuilder()
-            .set<PlayerState>()
-            .set<Health>()
-            .set<Character>()
-            .build();
+    static const bagel::Mask maskPlayer = bagel::MaskBuilder()
+        .set<PlayerState>()
+        .set<Health>()
+        .set<Character>()
+        .build();
 
-        static const bagel::Mask maskSpecialAttack = bagel::MaskBuilder()
-            .set<SpecialAttack>()
-            .set<Character>()
-            .build();
+    static const bagel::Mask maskSpecialAttack = bagel::MaskBuilder()
+        .set<SpecialAttack>()
+        .set<Character>()
+        .build();
 
-        static const bagel::Mask maskWin = bagel::MaskBuilder()
-            .set<Position>()
-            .set<WinMessage>()
-            .set<Texture>()
-            .set<Time>()
-            .build();
+    static const bagel::Mask maskWin = bagel::MaskBuilder()
+        .set<Position>()
+        .set<WinMessage>()
+        .set<Texture>()
+        .set<Time>()
+        .build();
 
-        SDL_Event event;
-
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_EVENT_QUIT) {
-                exit(0);
-            }
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        if (event.type == SDL_EVENT_QUIT) {
+            exit(0);
         }
-        SDL_RenderClear(ren);
-
-        for (bagel::ent_type e = {0}; e.id <= bagel::World::maxId().id; ++e.id)
-        {
-            if (bagel::Entity entity{e}; entity.test(mask))
-            {
-                SDL_FlipMode flipMode = SDL_FLIP_NONE;
-
-                auto& position = entity.get<Position>();
-                auto& texture = entity.get<Texture>();
-
-                if (entity.test(maskPlayer)) {
-                    auto& playerState = entity.get<PlayerState>();
-                    auto& character = entity.get<Character>();
-
-                    const int frame = (playerState.state == State::WALK_BACKWARDS)
-                        ? (playerState.busyFrames - (playerState.currFrame % playerState.busyFrames)): (playerState.currFrame);
-
-                    flipMode = (playerState.direction == LEFT) ?
-                        SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
-
-                    texture.srcRect = getSpriteFrame(character, playerState.state, frame);
-                    texture.rect.w = static_cast<float>((character.sprite[playerState.state].w)) * SCALE_CHARACTER;
-                    texture.rect.h = static_cast<float>((character.sprite[playerState.state].h)) * SCALE_CHARACTER;
-                }
-                else if (entity.test(maskSpecialAttack))
-                {
-                    auto& specialAttack = entity.get<SpecialAttack>();
-                    auto& character = entity.get<Character>();
-                    flipMode = (specialAttack.direction == LEFT) ?
-                        SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
-
-                    texture.srcRect = getSpriteFrame(character, specialAttack.type, specialAttack.frame);
-                    texture.rect.w = static_cast<float>((character.specialAttackSprite[specialAttack.type].w)) * SCALE_CHARACTER;
-                    texture.rect.h = static_cast<float>((character.specialAttackSprite[specialAttack.type].h)) * SCALE_CHARACTER;
-                }
-                else if (entity.test(maskWin))
-                {
-                    auto& character = entity.get<Character>();
-                    texture.srcRect = getWinSpriteFrame(character, (static_cast<int>(entity.get<Time>().time) / 16));
-                    texture.rect.w = static_cast<float>((character.winText.w)) * SCALE_CHARACTER;
-                    texture.rect.h = static_cast<float>((character.winText.h)) * SCALE_CHARACTER;
-                }
-
-                texture.rect.x = position.x;
-                texture.rect.y = position.y;
-
-                SDL_RenderTextureRotated(
-                    ren, texture.tex, &texture.srcRect, &texture.rect, 0,
-                    nullptr, flipMode);
-            }
-        }
-
-        SDL_RenderPresent(ren);
     }
+
+    SDL_RenderClear(ren);
+
+    // Pass 1: Draw background entities only
+    for (bagel::ent_type e = {0}; e.id <= bagel::World::maxId().id; ++e.id)
+    {
+        if (bagel::Entity entity{e}; entity.test(mask) && entity.has<Background>())
+        {
+            auto& position = entity.get<Position>();
+            auto& texture = entity.get<Texture>();
+
+            texture.rect.x = position.x;
+            texture.rect.y = position.y;
+
+            SDL_RenderTextureRotated(ren, texture.tex, &texture.srcRect, &texture.rect, 0, nullptr, SDL_FLIP_NONE);
+        }
+    }
+
+    // Pass 2: Draw all other entities
+    for (bagel::ent_type e = {0}; e.id <= bagel::World::maxId().id; ++e.id)
+    {
+        if (bagel::Entity entity{e}; entity.test(mask) && !entity.has<Background>())
+        {
+            SDL_FlipMode flipMode = SDL_FLIP_NONE;
+
+            auto& position = entity.get<Position>();
+            auto& texture = entity.get<Texture>();
+
+            if (entity.test(maskPlayer)) {
+                auto& playerState = entity.get<PlayerState>();
+                auto& character = entity.get<Character>();
+
+                const int frame = (playerState.state == State::WALK_BACKWARDS)
+                    ? (playerState.busyFrames - (playerState.currFrame % playerState.busyFrames)) : (playerState.currFrame);
+
+                flipMode = (playerState.direction == LEFT) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
+
+                texture.srcRect = getSpriteFrame(character, playerState.state, frame);
+                texture.rect.w = static_cast<float>((character.sprite[playerState.state].w)) * SCALE_CHARACTER;
+                texture.rect.h = static_cast<float>((character.sprite[playerState.state].h)) * SCALE_CHARACTER;
+            }
+            else if (entity.test(maskSpecialAttack)) {
+                auto& specialAttack = entity.get<SpecialAttack>();
+                auto& character = entity.get<Character>();
+
+                flipMode = (specialAttack.direction == LEFT) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
+
+                texture.srcRect = getSpriteFrame(character, specialAttack.type, specialAttack.frame);
+                texture.rect.w = static_cast<float>((character.specialAttackSprite[specialAttack.type].w)) * SCALE_CHARACTER;
+                texture.rect.h = static_cast<float>((character.specialAttackSprite[specialAttack.type].h)) * SCALE_CHARACTER;
+            }
+            else if (entity.test(maskWin)) {
+                auto& character = entity.get<Character>();
+                texture.srcRect = getWinSpriteFrame(character, (static_cast<int>(entity.get<Time>().time) / 16));
+                texture.rect.w = static_cast<float>((character.winText.w)) * SCALE_CHARACTER;
+                texture.rect.h = static_cast<float>((character.winText.h)) * SCALE_CHARACTER;
+            }
+
+            texture.rect.x = position.x;
+            texture.rect.y = position.y;
+
+            SDL_RenderTextureRotated(
+                ren, texture.tex, &texture.srcRect, &texture.rect, 0,
+                nullptr, flipMode);
+        }
+    }
+
+    SDL_RenderPresent(ren);
+}
+
 
     SDL_FRect MK::getSpriteFrame(const Character& character, State action, const int frame,
                                                const bool shadow)
@@ -398,23 +700,10 @@ namespace mortal_kombat
                 }
             }
 
-            if (inputs == Inputs::JUMP_PUNCH)
+            if (inputs == Inputs::JUMP_LOW_KICK
+                || inputs == Inputs::JUMP_HIGH_KICK)
             {
-                state = State::JUMP_PUNCH;
-                freezeFrame = character.sprite[state].frameCount - 1;
-                attack = true;
-                jumping = true;
-            }
-            else if (inputs == Inputs::JUMP_LOW_KICK)
-            {
-                state = State::JUMP_LOW_KICK;
-                freezeFrame = character.sprite[state].frameCount - 1;
-                attack = true;
-                jumping = true;
-            }
-            else if (inputs == Inputs::JUMP_HIGH_KICK)
-            {
-                state = State::JUMP_HIGH_KICK;
+                state = State::JUMP_KICK;
                 freezeFrame = character.sprite[state].frameCount - 1;
                 attack = true;
                 jumping = true;
@@ -431,12 +720,6 @@ namespace mortal_kombat
                 state = State::BLOCK;
                 freezeFrame = character.sprite[state].frameCount / 2 + 1;
                 freezeFrameDuration = 1;
-            }
-            else if (inputs == Inputs::CROUCH_KICK)
-            {
-                state = State::CROUCH_KICK;
-                crouching = true;
-                attack = true;
             }
             else if (inputs == Inputs::JUMP_BACK_RIGHT
                     || inputs == Inputs::JUMP_BACK_LEFT)
@@ -544,7 +827,7 @@ namespace mortal_kombat
                 if (playerState.busyFrames - 1 <= playerState.currFrame && playerState.freezeFrameDuration <= 0)
                     playerState.busy = false;
 
-                if (playerState.isLaying && !playerState.busy)
+                if (playerState.isLaying && !playerState.busy && !playerState.isJumping)
                 {
                     playerState.reset();
                     playerState.state = State::GETUP;
@@ -615,7 +898,7 @@ namespace mortal_kombat
                 createWinText(winner.get<Character>());
                 bool isJumping = loser.get<PlayerState>().isJumping;
                 loser.get<PlayerState>().reset();
-                loser.get<PlayerState>().state = State::GIDDY_FALL;
+                loser.get<PlayerState>().state = State::DIE;
                 loser.get<PlayerState>().busy = true;
                 loser.get<PlayerState>().isJumping = isJumping;
                 loser.get<PlayerState>().busyFrames = loser.get<Character>().sprite[loser.get<PlayerState>().state].frameCount;
@@ -632,9 +915,9 @@ namespace mortal_kombat
                 winner.get<PlayerState>().freezeFrameDuration = 1000;
             };
 
-            if (p1Health.health <= 0 && p1State.state != State::GIDDY_FALL)
+            if (p1Health.health <= 0 && p1State.state != State::DIE)
                 handleWinLose(player1, player2);
-            if (p2Health.health <= 0 && p2State.state != State::GIDDY_FALL)
+            if (p2Health.health <= 0 && p2State.state != State::DIE)
                 handleWinLose(player2, player1);
 
             // Direction update
@@ -645,7 +928,7 @@ namespace mortal_kombat
                 if (!state.isJumping && !state.busy && state.direction != newDir) {
                     state.direction = newDir;
                     state.reset();
-                    state.state = State::TURN_LEFT_TO_RIGHT;
+                    state.state = State::TURN;
                     state.busy = true;
                     state.busyFrames = character.sprite[state.state].frameCount;
                 }
@@ -884,7 +1167,7 @@ namespace mortal_kombat
             case State::HIGH_KICK:
             case State::JUMP_HIGH_KICK:
             case State::JUMP_PUNCH:
-            case State::JUMP_LOW_KICK:
+            case State::JUMP_KICK:
                 health.health -= 8;
                 playerState.reset();
                 if (isJumping)
@@ -1217,10 +1500,7 @@ namespace mortal_kombat
 
             switch (type)
             {
-                case State::FORWARD_JUMP_PUNCH:
-                case State::JUMP_PUNCH:
-                case State::JUMP_LOW_KICK:
-                case State::JUMP_HIGH_KICK:
+                case State::JUMP_KICK:
                 case State::LOW_PUNCH:
                 case State::HIGH_PUNCH:
                     width = 70.0f;
@@ -1371,21 +1651,22 @@ namespace mortal_kombat
             Position{0, 0},
             Texture{
                 texture,
-                { fenceX, fenceY, fenceW, fenceH }, // Only show the red/black part
-                { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT / 1.3f} // Stretch or place as needed
-            }
+                { 0, 0, 800, 600 }, // Only show the red/black part
+                { 0, 0, 800, 600} // Stretch or place as needed
+            },
+            Background{}
         );
-
-        // Create temple
-        bagel::Entity temple = bagel::Entity::create();
-        temple.addAll(
-            Position{0, 0},
-            Texture{
-                texture,
-                { templeX, templeY, templeW, templeH }, // Only show the red/black part
-                { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT } // Stretch to fit window
-            }
-        );
+        //
+        // // Create temple
+        // bagel::Entity temple = bagel::Entity::create();
+        // temple.addAll(
+        //     Position{0, 0},
+        //     Texture{
+        //         texture,
+        //         { templeX, templeY, templeW, templeH }, // Only show the red/black part
+        //         { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT } // Stretch to fit window
+        //     }
+        // );
     }
 
     void MK::createBar(bagel::Entity player1, bagel::Entity player2) const
