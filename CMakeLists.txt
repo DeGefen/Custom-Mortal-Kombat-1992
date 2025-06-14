@@ -20,6 +20,7 @@ add_executable(BAGEL
         mortal_Kombat.cpp
         mortal_Kombat.h
         mortal_kombat_info.h
+        mortal_kombat_info_sprites.h
 )
 
 add_subdirectory(lib/SDL)
