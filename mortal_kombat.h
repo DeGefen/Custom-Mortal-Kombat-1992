@@ -103,6 +103,8 @@ namespace mortal_kombat
 
         /* =============== Components =============== */
         /// @brief Position component holds the x and y coordinates of an object.
+        struct Background {};
+
         struct Position {
             float x = 0.0f, y = 0.0f;
         };

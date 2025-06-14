@@ -275,8 +275,9 @@ namespace mortal_kombat
 
     void MK::run() const
     {
+        bool matchOver = false;
         int frame_count = 0;
-        while (true)
+        while (!matchOver)
         {
             Uint32 frameStart = SDL_GetTicks();
 
@@ -289,6 +290,36 @@ namespace mortal_kombat
             RenderSystem();
             HealthBarSystem();
             AttackDecaySystem();
+
+            // Detect match end
+            int deadOrWinning = 0;
+            for (bagel::ent_type e = {0}; e.id <= bagel::World::maxId().id; ++e.id) {
+                if (bagel::Entity entity{e}; entity.has<PlayerState>()) {
+                    auto& state = entity.get<PlayerState>();
+                    if (state.state == State::WIN || state.state == State::DIE)
+                        ++deadOrWinning;
+                }
+            }
+            if (deadOrWinning >= 2) {
+                for (int i = 0; i < 100; i++) {
+                    Uint32 frameStart = SDL_GetTicks();
+
+                    if (frame_count % INPUT_FRAME_DELAY == 0) InputSystem();
+                    if (++frame_count % ACTION_FRAME_DELAY == 0) PlayerSystem();
+                    ClockSystem();
+                    CollisionSystem();
+                    SpecialAttackSystem();
+                    MovementSystem();
+                    RenderSystem();
+                    HealthBarSystem();
+                    AttackDecaySystem();
+                    if (Uint32 frameTime = SDL_GetTicks() - frameStart; FRAME_DELAY > frameTime) {
+                        SDL_Delay(FRAME_DELAY - frameTime);
+                    }
+                }
+
+                matchOver = true;
+            }
 
             if (Uint32 frameTime = SDL_GetTicks() - frameStart; FRAME_DELAY > frameTime) {
                 SDL_Delay(FRAME_DELAY - frameTime);
@@ -458,92 +489,106 @@ namespace mortal_kombat
     }
 
     void MK::RenderSystem() const
-    {
-        static const bagel::Mask mask = bagel::MaskBuilder()
-            .set<Position>()
-            .set<Texture>()
-            .build();
+{
+    static const bagel::Mask mask = bagel::MaskBuilder()
+        .set<Position>()
+        .set<Texture>()
+        .build();
 
-        static const bagel::Mask maskPlayer = bagel::MaskBuilder()
-            .set<PlayerState>()
-            .set<Health>()
-            .set<Character>()
-            .build();
+    static const bagel::Mask maskPlayer = bagel::MaskBuilder()
+        .set<PlayerState>()
+        .set<Health>()
+        .set<Character>()
+        .build();
 
-        static const bagel::Mask maskSpecialAttack = bagel::MaskBuilder()
-            .set<SpecialAttack>()
-            .set<Character>()
-            .build();
+    static const bagel::Mask maskSpecialAttack = bagel::MaskBuilder()
+        .set<SpecialAttack>()
+        .set<Character>()
+        .build();
 
-        static const bagel::Mask maskWin = bagel::MaskBuilder()
-            .set<Position>()
-            .set<WinMessage>()
-            .set<Texture>()
-            .set<Time>()
-            .build();
+    static const bagel::Mask maskWin = bagel::MaskBuilder()
+        .set<Position>()
+        .set<WinMessage>()
+        .set<Texture>()
+        .set<Time>()
+        .build();
 
-        SDL_Event event;
-
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_EVENT_QUIT) {
-                exit(0);
-            }
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        if (event.type == SDL_EVENT_QUIT) {
+            exit(0);
         }
-        SDL_RenderClear(ren);
-
-        for (bagel::ent_type e = {0}; e.id <= bagel::World::maxId().id; ++e.id)
-        {
-            if (bagel::Entity entity{e}; entity.test(mask))
-            {
-                SDL_FlipMode flipMode = SDL_FLIP_NONE;
-
-                auto& position = entity.get<Position>();
-                auto& texture = entity.get<Texture>();
-
-                if (entity.test(maskPlayer)) {
-                    auto& playerState = entity.get<PlayerState>();
-                    auto& character = entity.get<Character>();
-
-                    const int frame = (playerState.state == State::WALK_BACKWARDS)
-                        ? (playerState.busyFrames - (playerState.currFrame % playerState.busyFrames)): (playerState.currFrame);
-
-                    flipMode = (playerState.direction == LEFT) ?
-                        SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
-
-                    texture.srcRect = getSpriteFrame(character, playerState.state, frame);
-                    texture.rect.w = static_cast<float>((character.sprite[playerState.state].w)) * SCALE_CHARACTER;
-                    texture.rect.h = static_cast<float>((character.sprite[playerState.state].h)) * SCALE_CHARACTER;
-                }
-                else if (entity.test(maskSpecialAttack))
-                {
-                    auto& specialAttack = entity.get<SpecialAttack>();
-                    auto& character = entity.get<Character>();
-                    flipMode = (specialAttack.direction == LEFT) ?
-                        SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
-
-                    texture.srcRect = getSpriteFrame(character, specialAttack.type, specialAttack.frame);
-                    texture.rect.w = static_cast<float>((character.specialAttackSprite[specialAttack.type].w)) * SCALE_CHARACTER;
-                    texture.rect.h = static_cast<float>((character.specialAttackSprite[specialAttack.type].h)) * SCALE_CHARACTER;
-                }
-                else if (entity.test(maskWin))
-                {
-                    auto& character = entity.get<Character>();
-                    texture.srcRect = getWinSpriteFrame(character, (static_cast<int>(entity.get<Time>().time) / 16));
-                    texture.rect.w = static_cast<float>((character.winText.w)) * SCALE_CHARACTER;
-                    texture.rect.h = static_cast<float>((character.winText.h)) * SCALE_CHARACTER;
-                }
-
-                texture.rect.x = position.x;
-                texture.rect.y = position.y;
-
-                SDL_RenderTextureRotated(
-                    ren, texture.tex, &texture.srcRect, &texture.rect, 0,
-                    nullptr, flipMode);
-            }
-        }
-
-        SDL_RenderPresent(ren);
     }
+
+    SDL_RenderClear(ren);
+
+    // Pass 1: Draw background entities only
+    for (bagel::ent_type e = {0}; e.id <= bagel::World::maxId().id; ++e.id)
+    {
+        if (bagel::Entity entity{e}; entity.test(mask) && entity.has<Background>())
+        {
+            auto& position = entity.get<Position>();
+            auto& texture = entity.get<Texture>();
+
+            texture.rect.x = position.x;
+            texture.rect.y = position.y;
+
+            SDL_RenderTextureRotated(ren, texture.tex, &texture.srcRect, &texture.rect, 0, nullptr, SDL_FLIP_NONE);
+        }
+    }
+
+    // Pass 2: Draw all other entities
+    for (bagel::ent_type e = {0}; e.id <= bagel::World::maxId().id; ++e.id)
+    {
+        if (bagel::Entity entity{e}; entity.test(mask) && !entity.has<Background>())
+        {
+            SDL_FlipMode flipMode = SDL_FLIP_NONE;
+
+            auto& position = entity.get<Position>();
+            auto& texture = entity.get<Texture>();
+
+            if (entity.test(maskPlayer)) {
+                auto& playerState = entity.get<PlayerState>();
+                auto& character = entity.get<Character>();
+
+                const int frame = (playerState.state == State::WALK_BACKWARDS)
+                    ? (playerState.busyFrames - (playerState.currFrame % playerState.busyFrames)) : (playerState.currFrame);
+
+                flipMode = (playerState.direction == LEFT) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
+
+                texture.srcRect = getSpriteFrame(character, playerState.state, frame);
+                texture.rect.w = static_cast<float>((character.sprite[playerState.state].w)) * SCALE_CHARACTER;
+                texture.rect.h = static_cast<float>((character.sprite[playerState.state].h)) * SCALE_CHARACTER;
+            }
+            else if (entity.test(maskSpecialAttack)) {
+                auto& specialAttack = entity.get<SpecialAttack>();
+                auto& character = entity.get<Character>();
+
+                flipMode = (specialAttack.direction == LEFT) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
+
+                texture.srcRect = getSpriteFrame(character, specialAttack.type, specialAttack.frame);
+                texture.rect.w = static_cast<float>((character.specialAttackSprite[specialAttack.type].w)) * SCALE_CHARACTER;
+                texture.rect.h = static_cast<float>((character.specialAttackSprite[specialAttack.type].h)) * SCALE_CHARACTER;
+            }
+            else if (entity.test(maskWin)) {
+                auto& character = entity.get<Character>();
+                texture.srcRect = getWinSpriteFrame(character, (static_cast<int>(entity.get<Time>().time) / 16));
+                texture.rect.w = static_cast<float>((character.winText.w)) * SCALE_CHARACTER;
+                texture.rect.h = static_cast<float>((character.winText.h)) * SCALE_CHARACTER;
+            }
+
+            texture.rect.x = position.x;
+            texture.rect.y = position.y;
+
+            SDL_RenderTextureRotated(
+                ren, texture.tex, &texture.srcRect, &texture.rect, 0,
+                nullptr, flipMode);
+        }
+    }
+
+    SDL_RenderPresent(ren);
+}
+
 
     SDL_FRect MK::getSpriteFrame(const Character& character, State action, const int frame,
                                                const bool shadow)
@@ -1558,7 +1603,8 @@ namespace mortal_kombat
                 texture,
                 { 0, 0, 800, 600 }, // Only show the red/black part
                 { 0, 0, 800, 600} // Stretch or place as needed
-            }
+            },
+            Background{}
         );
         //
         // // Create temple
