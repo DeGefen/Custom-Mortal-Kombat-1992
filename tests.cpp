@@ -3,6 +3,7 @@
 #include "bagel.h"
 #include "SDL3/SDL.h"
 #include "SDL3_mixer/SDL_mixer.h"
+#include "SoundManager.h"
 using namespace std;
 using namespace bagel;
 
@@ -20,50 +21,26 @@ void test1() {
 	cout << "Test 1 passed\n";
 }
 
-void soundTest(const char* path) {
-	// Define desired audio spec
-	SDL_AudioSpec spec = {
-		.format = SDL_AUDIO_S16,
-		.channels = 2,
-		.freq = 44100,
-		//.samples = 2048,
-	};
-
-	// Open default audio device
-	if (!Mix_OpenAudio(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &spec)) {
-		SDL_Log("Mix_OpenAudio failed: %s", SDL_GetError());
+void soundTest(const string& path) {
+	if (!SoundManager::init()) {
+		SDL_Log("Sound system failed to init");
 		return;
 	}
 
-	// Load music from file
-	Mix_Music* music = Mix_LoadMUS(path);
-	if (!music) {
-		SDL_Log("Mix_LoadMUS failed: %s", SDL_GetError());
-		Mix_CloseAudio();
-		return;
+	SoundManager::playMusic(path);
+	SoundManager::loadSoundEffect("punch", "res/sound/sound effects/hitsounds/mk1-00048.mp3");
+	SoundManager::playSoundEffect("punch");
+
+	while (true) {
+		SDL_Delay(1000); // Listen
+		SoundManager::playSoundEffect("punch");
 	}
 
-	// Play music in a loop
-	if (!Mix_PlayMusic(music, -1)) {
-		SDL_Log("Mix_PlayMusic failed: %s", SDL_GetError());
-		Mix_FreeMusic(music);
-		Mix_CloseAudio();
-		return;
-	}
-
-	SDL_Log("Now playing music...");
-
-	// Simulate a short delay to hear the music
-	SDL_Delay(10000);
-
-	// Cleanup
-	Mix_HaltMusic();
-	Mix_FreeMusic(music);
-	Mix_CloseAudio();
+	SoundManager::shutdown();
 }
 
 void run_tests()
 {
-	soundTest("res/academic tel aviv theme.mp3");
-	soundTest("res/Character Select.mp3");
+	//soundTest("res/sound/background music/academic tel aviv theme.mp3");
+	soundTest("res/sound/background music/Character Select.mp3");
 }

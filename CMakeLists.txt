@@ -22,6 +22,8 @@ add_executable(BAGEL
         mortal_kombat_info.h
         mortal_kombat_info_sprites.h
         tests.h
+        SoundManager.cpp
+        SoundManager.h
 )
 
 add_subdirectory(lib/SDL)
