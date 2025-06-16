@@ -24,6 +24,7 @@ add_executable(BAGEL
         tests.h
         SoundManager.cpp
         SoundManager.h
+        EventQueue.h
 )
 
 add_subdirectory(lib/SDL)

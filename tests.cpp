@@ -29,7 +29,6 @@ void soundTest(const string& path) {
 
 	SoundManager::playMusic(path);
 	SoundManager::loadSoundEffect("punch", "res/sound/sound effects/hitsounds/mk1-00048.mp3");
-	SoundManager::playSoundEffect("punch");
 
 	while (true) {
 		SDL_Delay(1000); // Listen

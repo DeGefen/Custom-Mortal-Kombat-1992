@@ -11,6 +11,10 @@
 #include <unordered_map>
 
 class SoundManager {
+private:
+    static std::unordered_map<std::string, Mix_Chunk*> s_SoundEffects;
+    static Mix_Music* s_CurrentMusic;
+
 public:
     static bool init();
     static void shutdown();
@@ -21,9 +25,6 @@ public:
     static bool loadSoundEffect(const std::string& name, const std::string& path);
     static bool playSoundEffect(const std::string& name, int loops = 0);
 
-private:
-    static std::unordered_map<std::string, Mix_Chunk*> s_SoundEffects;
-    static Mix_Music* s_CurrentMusic;
 };
 
 #endif //SOUNDMANAGER_H
