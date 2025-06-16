@@ -109,7 +109,7 @@ namespace mortal_kombat
 
     std::pair<int, int> MK::chooseFighterScreen() const {
     SDL_Texture* menuTexture = TextureSystem::getTexture(
-        ren, "res/Menus&Text.png", TextureSystem::IgnoreColorKey::NAME_BAR);
+        ren, "res/Menus&Texts.png", TextureSystem::IgnoreColorKey::NAME_BAR);
     if (!menuTexture) {
         SDL_Log("Failed to load fighter selection screen");
         return {-1, -1};
@@ -1686,8 +1686,8 @@ namespace mortal_kombat
         constexpr float xRight = WINDOW_WIDTH - BAR_WIDTH - MARGIN;
 
         // Load the image as a surface
-        auto barTexture = TextureSystem::getTexture(ren, "res/Menus&Text.png", TextureSystem::IgnoreColorKey::DAMAGE_BAR);
-        auto nameTexture = TextureSystem::getTexture(ren, "res/Menus&Text.png", TextureSystem::IgnoreColorKey::NAME_BAR);
+        auto barTexture = TextureSystem::getTexture(ren, "res/Menus&Texts.png", TextureSystem::IgnoreColorKey::DAMAGE_BAR);
+        auto nameTexture = TextureSystem::getTexture(ren, "res/Menus&Texts.png", TextureSystem::IgnoreColorKey::NAME_BAR);
 
         // Player 1 - RED background bar
         bagel::Entity red1 = bagel::Entity::create();
@@ -1763,7 +1763,7 @@ namespace mortal_kombat
     void MK::createWinText(const Character& winCharacter) const
     {
         // Load the image as a surface
-        const auto texture = TextureSystem::getTexture(ren, "res/Menus&Text.png", TextureSystem::IgnoreColorKey::WIN_TEXT);
+        const auto texture = TextureSystem::getTexture(ren, "res/Menus&Texts.png", TextureSystem::IgnoreColorKey::WIN_TEXT);
 
         // Create win text entity
         bagel::Entity winText = bagel::Entity::create();
