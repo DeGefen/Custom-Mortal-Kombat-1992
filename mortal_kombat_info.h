@@ -37,6 +37,8 @@ namespace mortal_kombat
         LOW_SWEEP_KICK,
         ROLL,
         SPECIAL_1,
+        SPECIAL_2,
+        SPECIAL_3,
         TORSO_HIT,
         TURN,
         UPPERCUT,
@@ -44,19 +46,18 @@ namespace mortal_kombat
         WALK_FORWARDS,
         WALK_BACKWARDS,
         WIN,
-        SPECIAL_2,
-        SPECIAL_3,
-        JUMP_PUNCH,
-        JUMP_HIGH_KICK,
-        CROUCH_KICK,
     };
 
 
     /// @brief Enum SpecialAttacks hold the different special attacks types.
-    enum class SpecialAttacks
+    enum class SpecialAttackState
     {
-        FIREBALL,
-        EXPLOSION,
+        SPECIAL_1_ATTACK,
+        SPECIAL_1_HIT,
+        SPECIAL_2_ATTACK,
+        SPECIAL_2_HIT,
+        SPECIAL_3_ATTACK,
+        SPECIAL_3_HIT,
         NONE
     };
 
@@ -75,12 +76,12 @@ namespace mortal_kombat
         MOSHE,
         ITAMAR,
         YANIV,
-        GEFFEN,
+        GEFEN,
         YONATAN
     };
 
     static constexpr int CHARACTER_SPRITE_SIZE = 30;
-    static constexpr int SPECIAL_ATTACK_SPRITE_SIZE = 2;
+    static constexpr int SPECIAL_ATTACK_SPRITE_SIZE = 7;
     static constexpr int WIN_SPRITE_BY_CHARACTER_SIZE = 14;
 
     /// @brief SpriteInfo struct holds the sprite information.
@@ -113,9 +114,12 @@ namespace mortal_kombat
             return sprite[static_cast<int>(s)];
         }
 
+        constexpr SpriteInfo& next(T& s) {
+            return sprite[(static_cast<int>(s) + 1) % SIZE];
+        }
+
     private:
         std::array<SpriteInfo, SIZE> sprite;
     };
 
-    #include "mortal_kombat_info_sprites.h"
 };
