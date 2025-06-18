@@ -20,6 +20,10 @@ add_executable(BAGEL
         mortal_Kombat.cpp
         mortal_Kombat.h
         mortal_kombat_info.h
+        tests.h
+        SoundManager.cpp
+        SoundManager.h
+        EventQueue.h
         mortal_kombat_characters_data.h
 )
 
@@ -28,6 +32,19 @@ target_link_libraries(BAGEL PUBLIC SDL3-static)
 
 add_subdirectory(lib/SDL_image)
 target_link_libraries(BAGEL PUBLIC SDL3_image-static)
+
+add_subdirectory(lib/SDL_mixer)
+target_link_libraries(BAGEL PUBLIC SDL3_mixer-static)
+
+#set(SDLMIXER_VENDORED ON)
+#add_subdirectory(lib/SDL_mixer)
+#target_link_libraries(BAGEL PUBLIC SDL3_mixer-static)
+#
+#target_include_directories(${PROJECT_NAME} PRIVATE
+#        ${PROJECT_SOURCE_DIR}/lib/SDL_mixer/include
+#        ${PROJECT_SOURCE_DIR}/lib/SDL_mixer/include/SDL3_mixer
+#)
+
 
 set(BOX2D_SAMPLES OFF)
 set(BOX2D_BENCHMARKS OFF)
