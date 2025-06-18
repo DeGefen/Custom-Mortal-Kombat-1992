@@ -342,12 +342,12 @@ namespace mortal_kombat
 
     static constexpr std::array<SpriteInfo, WIN_SPRITE_BY_CHARACTER_SIZE>
     WIN_SPRITE_BY_CHARACTER_ARRAY{{
-        {2, 3714, 15, 329, 52}, //Moshe = Cage
-        {2, 3714, 67, 329, 52}, //Itamar = Kano
-        {2, 3714, 119, 329, 52}, //Yaniv = Raiden
-        {2, 3714, 223, 329, 52}, //Gefen = Scorpion
-        {2, 3714, 223, 329, 52}, //Ofek = Scorpion
-        {2, 3714, 327, 329, 52}, //Yonatan = Sonya
+        {2, 3714, 15, 329, 52, 2}, //Moshe
+        {2, 3714, 67, 329, 52, 2}, //Itamar
+        {2, 3714, 119, 329, 52, 2}, //Yaniv
+        {2, 3714, 171, 329, 52, 2}, //Gefen
+        {2, 3714, 223, 329, 52, 2}, //Ofek
+        {2, 3714, 327, 329, 52, 2}, //Yonatan
     }};
 
     static constexpr SpriteData<CharacterType, WIN_SPRITE_BY_CHARACTER_SIZE> WIN_SPRITE(WIN_SPRITE_BY_CHARACTER_ARRAY);

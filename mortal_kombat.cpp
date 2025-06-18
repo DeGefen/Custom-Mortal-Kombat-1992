@@ -117,11 +117,11 @@ namespace mortal_kombat
 
     // Load character images
     SDL_Texture* characterTextures[numOfFighters] = {
-        TextureSystem::getTexture(ren, "res/moshe_w_pic.png", TextureSystem::IgnoreColorKey::CHARACTER),
-        TextureSystem::getTexture(ren, "res/itamar_w_pic.png", TextureSystem::IgnoreColorKey::CHARACTER),
-        TextureSystem::getTexture(ren, "res/yaniv_w_pic.png", TextureSystem::IgnoreColorKey::CHARACTER),
-        TextureSystem::getTexture(ren, "res/gefen_w_pic.png", TextureSystem::IgnoreColorKey::CHARACTER),
-        TextureSystem::getTexture(ren, "res/yonatan_w_pic.png", TextureSystem::IgnoreColorKey::CHARACTER)
+        TextureSystem::getTexture(ren, "res/moshe_w_pic.png", TextureSystem::IgnoreColorKey::NONE),
+        TextureSystem::getTexture(ren, "res/itamar_w_pic.png", TextureSystem::IgnoreColorKey::NONE),
+        TextureSystem::getTexture(ren, "res/yaniv_w_pic.png", TextureSystem::IgnoreColorKey::NONE),
+        TextureSystem::getTexture(ren, "res/gefen_w_pic.png", TextureSystem::IgnoreColorKey::NONE),
+        TextureSystem::getTexture(ren, "res/yonatan_w_pic.png", TextureSystem::IgnoreColorKey::NONE)
     };
 
     SDL_FRect srcRect = {900, 381, 64*numOfFighters + 10, 183};
@@ -160,16 +160,16 @@ namespace mortal_kombat
             else if (event.type == SDL_EVENT_KEY_DOWN) {
                 switch (event.key.key) {
                     case SDLK_LEFT:
-                        if (selectedP1 % GRID_COLS > 0) selectedP1--;
-                        break;
-                    case SDLK_RIGHT:
-                        if (selectedP1 % GRID_COLS < GRID_COLS - 1) selectedP1++;
-                        break;
-                    case SDLK_A:
                         if (selectedP2 % GRID_COLS > 0) selectedP2--;
                         break;
-                    case SDLK_D:
+                    case SDLK_RIGHT:
                         if (selectedP2 % GRID_COLS < GRID_COLS - 1) selectedP2++;
+                        break;
+                    case SDLK_A:
+                        if (selectedP1 % GRID_COLS > 0) selectedP1--;
+                        break;
+                    case SDLK_D:
+                        if (selectedP1 % GRID_COLS < GRID_COLS - 1) selectedP1++;
                         break;
                     case SDLK_RETURN:
                     case SDLK_KP_ENTER:
@@ -673,11 +673,11 @@ namespace mortal_kombat
     SDL_FRect MK::getWinSpriteFrame(const Character& character, const int frame)
     {
         return {static_cast<float>(character.winText.x
-                    + ((frame % character.winText.frameCount)
-                    * (NEXT_FRAME_OFFSET + character.winText.w))) + 2
-                ,static_cast<float>(character.winText.y) + 2
-                ,static_cast<float>(character.winText.w) - 4
-                ,static_cast<float>(character.winText.h) - 4};
+                    + (((frame / character.winText.frameDuration) % character.winText.frameCount)
+                    * (NEXT_FRAME_OFFSET + character.winText.w))) + 4
+                ,static_cast<float>(character.winText.y) + 4
+                ,static_cast<float>(character.winText.w) - 8
+                ,static_cast<float>(character.winText.h) - 8};
     }
 
     void MK::PlayerSystem() const
