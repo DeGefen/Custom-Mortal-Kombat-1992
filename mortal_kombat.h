@@ -276,6 +276,7 @@ namespace mortal_kombat
             bool isBullet = false; // Whether the special attack is a projectile
             bool moveCharacter = false; // Whether the special attack moves the character
             bool explode = false;
+            bool noReverse = true;
             float movement = 0.0f; // Movement speed of the special attack
             float damage = 0.0f; // Damage dealt by the special attack
             float hitboxWidth = 0.0f; // Width of the hitbox

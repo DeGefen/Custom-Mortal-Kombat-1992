@@ -621,7 +621,7 @@ namespace mortal_kombat
                 auto& specialAttack = entity.get<SpecialAttack>();
                 auto& specialAttackData = entity.get<SpecialAttackData>();
 
-                flipMode = (specialAttack.direction == LEFT) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
+                flipMode = (specialAttack.direction == LEFT && !specialAttackData.noReverse) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
 
                 texture.srcRect = getSpriteFrame(specialAttackData, specialAttack.type, specialAttack.frame);
                 texture.rect.w = static_cast<float>((specialAttackData.specialAttackSprite[specialAttack.type].w))
