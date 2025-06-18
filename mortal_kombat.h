@@ -6,6 +6,7 @@
  **/
 
 #pragma once
+#include <cassert>
 #include "mortal_kombat_info.h"
 #include <functional>
 #include <string>
@@ -65,9 +66,9 @@ namespace mortal_kombat
         static constexpr int WINDOW_HEIGHT = 600.0f;
         static constexpr int WINDOW_SCALE = 100.0f;
 
-        static constexpr int BOUNDARY_WIDTH = 500.0f;
+        static constexpr int BOUNDARY_WIDTH = 10.0f;
 
-        static constexpr float SCALE_CHARACTER = 1.5f;
+        static constexpr float CHARACTER_SCALE = 1.5f;
         static constexpr float CHARACTER_WIDTH = 50;
         static constexpr float CHARACTER_HEIGHT = 135;
 
@@ -97,7 +98,7 @@ namespace mortal_kombat
         static constexpr int templeW = 300;
         static constexpr int templeH = 245;
         // --------------------------------------------------------
-        static constexpr int numOfFighters = 5;
+        static constexpr int numOfFighters = 6;
 
 
         SDL_Renderer* ren{};
@@ -106,9 +107,8 @@ namespace mortal_kombat
         b2WorldId boxWorld{};
 
         /* =============== Components =============== */
-        /// @brief Position component holds the x and y coordinates of an object.
-        struct Background {};
 
+        /// @brief Position component holds the x and y coordinates of an object.
         struct Position {
             float x = 0.0f, y = 0.0f;
         };
@@ -259,31 +259,68 @@ namespace mortal_kombat
             static constexpr int ATTACK_LIFE_TIME = 1;
         };
 
-        /// @brief SpecialAttack component holds the special move type and inputs for the attack.
+        /// @brief SpecialAttack component holds the special move type.
         struct SpecialAttack {
-            SpecialAttacks type = SpecialAttacks::NONE;
+            SpecialAttackState type = SpecialAttackState::NONE;
             bool direction = RIGHT;
+            int attacker = 0; // Attacker's player number
             int frame = 0;
             int totalFrames = 0;
-            bool explode = false;
+            bool hit = false;
+        };
 
-            static constexpr int SPECIAL_ATTACK_LIFE_TIME = 70;
+        /// @brief SpecialAttackData holds the data for a special attack, including hitbox and damage.
+        struct SpecialAttackData {
+            State HitType = State::TORSO_HIT;
+            SpecialAttackState type = SpecialAttackState::NONE; // Type of the special attack
+            bool isBullet = false; // Whether the special attack is a projectile
+            bool moveCharacter = false; // Whether the special attack moves the character
+            bool explode = false;
+            bool noReverse = true;
+            float movement = 0.0f; // Movement speed of the special attack
+            float damage = 0.0f; // Damage dealt by the special attack
+            float hitboxWidth = 0.0f; // Width of the hitbox
+            float hitboxHeight = 0.0f; // Height of the hitbox
+            float hitboxOffsetX = 0.0f; // X offset of the hitbox
+            float hitboxOffsetY = 0.0f; // Y offset of the hitbox
+            float duration = 0; // Duration of the special attack
+            float explosionDuration = 0; // Duration of the explosion
+            float scale = 1.0f; // Scale of the special
+
+            SpriteData<SpecialAttackState, SPECIAL_ATTACK_SPRITE_SIZE> specialAttackSprite;
+
+            b2Vec2 getAttackPosition(const float x, const float y) const
+            {
+                return getPosition(x + (specialAttackSprite[type].w * scale * CHARACTER_SCALE / 2.0f),
+                                    y + (specialAttackSprite[type].h * scale * CHARACTER_SCALE / 2.0f));
+            }
+
+            b2Vec2 getAttackPosition(const Position& position) const
+            {
+                return getPosition(position.x + (specialAttackSprite[type].w * scale * CHARACTER_SCALE / 2.0f),
+                                    position.y + (specialAttackSprite[type].h * scale * CHARACTER_SCALE / 2.0f));
+            }
         };
 
         /// @brief Character component holds the character information of the player.
         struct Character {
-            static constexpr int SPECIAL_ATTACKS_COUNT = 3;
+            static constexpr int SPECIAL_ATTACKS_COUNT = 1;
             static constexpr int COMBO_LENGTH = 3;
 
             char name[10] = {};
             SpriteData<State, CHARACTER_SPRITE_SIZE> sprite;
-            SpriteData<SpecialAttacks, SPECIAL_ATTACK_SPRITE_SIZE> specialAttackSprite; // Updated type
-            float specialAttackOffset_y{};
             // SpecialAttack are times 2 because of the direction
-            Input specialAttacks[SPECIAL_ATTACKS_COUNT * 2][COMBO_LENGTH] = {};
+            Input specialAttacksInputs[SPECIAL_ATTACKS_COUNT * 2][COMBO_LENGTH] = {};
+            SpecialAttackData specialAttackData[SPECIAL_ATTACKS_COUNT];
             SDL_FRect leftBarNameSource{};
             SDL_FRect rightBarNameSource{};
             SpriteInfo winText;
+
+            SpecialAttackData& getSpecialAttackData(State state)
+            {
+                assert(state >= State::SPECIAL_1 && state <= State::SPECIAL_3 && "Invalid state for special attack data");
+                return specialAttackData[static_cast<int>(state) - static_cast<int>(State::SPECIAL_1)];
+            }
         };
 
         /// @brief Health component holds the maximum and current health of the player.
@@ -317,6 +354,9 @@ namespace mortal_kombat
         struct WinMessage {
         };
 
+        /// @brief Background component is used to identify background entities.
+        struct Background {};
+
         /* =============== Systems =============== */
 
         /// @brief Updates the position of entities based on their movement components.
@@ -334,6 +374,18 @@ namespace mortal_kombat
             return {x / WINDOW_SCALE, y / WINDOW_SCALE};
         }
 
+        static b2Vec2 getCharPosition(const Position& position)
+        {
+            return {(position.x + CHAR_SQUARE_WIDTH * CHARACTER_SCALE / 2.0f ) / WINDOW_SCALE,
+                    (position.y + CHAR_SQUARE_HEIGHT * CHARACTER_SCALE / 2.0f) / WINDOW_SCALE};
+        }
+
+        static b2Vec2 getCharPosition(const float x, const float y)
+        {
+            return {(x + CHAR_SQUARE_WIDTH * CHARACTER_SCALE / 2.0f) / WINDOW_SCALE,
+                    (y + CHAR_SQUARE_HEIGHT * CHARACTER_SCALE / 2.0f) / WINDOW_SCALE};
+        }
+
         /// @brief Renders entities with position and texture components to the screen.
         void RenderSystem() const;
 
@@ -341,18 +393,17 @@ namespace mortal_kombat
         /// @param character Character data for the player.
         /// @param action Action state of the character.
         /// @param frame Frame number of the action.
-        /// @param shadow Whether to return shadow.
         /// @return SDL_FRect representing the sprite rectangle.
         static SDL_FRect getSpriteFrame(const Character& character, State action,
-                                            int frame, bool shadow = false);
+                                        int frame);
 
         /// @brief Returns the sprite rectangle for a given action and frame.
         /// @param character Character data for the player.
         /// @param action Action state of the SpecialAttack.
         /// @param frame Frame number of the action.
         /// @return SDL_FRect representing the sprite rectangle.
-        static SDL_FRect getSpriteFrame(const Character& character, SpecialAttacks action,
-                                            int frame);
+        static SDL_FRect getSpriteFrame(const SpecialAttackData& character, SpecialAttackState action,
+                                        int frame);
 
         /// @brief Returns the sprite rectangle for a given action and frame.
         /// @param character Character data for the player.
@@ -393,6 +444,7 @@ namespace mortal_kombat
                 NAME_BAR,
                 DAMAGE_BAR,
                 WIN_TEXT,
+                NONE,
             };
             /// @brief Loads a texture from a file and caches it for future use.
             static SDL_Texture* getTexture(SDL_Renderer* renderer, const std::string& filePath, IgnoreColorKey ignoreColorKey);
@@ -451,12 +503,12 @@ namespace mortal_kombat
 
         /// @brief Creates a special attack entity.
         /// @param x,y Position of the entity in the game world.
-        /// @param type Type of the special attack.
+        /// @param specialAttackData Type of the special attack.
         /// @param playerNumber Player number (1 or 2).
         /// @param direction attack direction.
-        /// @param character Character data for the player.
-        void createSpecialAttack(float x, float y, SpecialAttacks type, int playerNumber,
-                                bool direction, Character& character) const;
+        /// @param type
+        void createSpecialAttack(float x, float y, SpecialAttackData& specialAttackData, int playerNumber,
+                                 bool direction, State type) const;
 
         /// @brief Creates a static platform/boundary.
         /// @param side boundary side (left or right).
@@ -483,65 +535,74 @@ namespace mortal_kombat
          * Contains all relevant data for a character, including name, health, position, and state.
          * Used for managing character logic, rendering, and interactions in the game world.
          */
+
+        #include "mortal_kombat_characters_data.h"
+
         struct Characters
         {
             constexpr static Character MOSHE = {
                 .name = "Moshe",
                 .sprite = MOSHE_SPRITE,
-                .specialAttackSprite = MOSHE_SPECIAL_ATTACK_SPRITE,
-                .specialAttackOffset_y = 88,
-                .specialAttacks = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
-                            {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
-                .leftBarNameSource = { 5406, 99, 163, 12 }, //Cage
-                .rightBarNameSource = { 5579, 99, 163, 12 },
+                .specialAttacksInputs = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
+                                            {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
+                .specialAttackData = {ERORR_SPECIAL_ATTACK},
+                .leftBarNameSource = MOSHE_NAME_BAR_LEFT_SOURCE,
+                .rightBarNameSource = MOSHE_NAME_BAR_RIGHT_SOURCE,
                 .winText = WIN_SPRITE[CharacterType::MOSHE],
             };
 
             constexpr static Character ITAMAR = {
                 .name = "Itamar",
                 .sprite = ITAMAR_SPRITE,
-                .specialAttackSprite = ITAMAR_SPECIAL_ATTACK_SPRITE,
-                .specialAttackOffset_y = 72,
-                .specialAttacks = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
-                        {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
-                .leftBarNameSource = { 5406, 114, 163, 12 }, //Kano
-                .rightBarNameSource = { 5579, 114, 163, 12 },
+                .specialAttacksInputs = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
+                                            {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
+                .specialAttackData = {ITAMAR_SPECIAL_ATTACK_1},
+                .leftBarNameSource = ITAMAR_NAME_BAR_LEFT_SOURCE,
+                .rightBarNameSource = ITAMAR_NAME_BAR_RIGHT_SOURCE,
                 .winText = WIN_SPRITE[CharacterType::ITAMAR],
             };
 
             constexpr static Character YANIV = {
                 .name = "Yaniv",
                 .sprite = YANIV_SPRITE,
-                .specialAttackSprite = YANIV_SPECIAL_ATTACK_SPRITE,
-                .specialAttackOffset_y = 88,
-                .specialAttacks = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
-                            {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
-                .leftBarNameSource = { 5406, 129, 163, 12 }, //Raiden
-                .rightBarNameSource = { 5579, 129, 163, 12 },
+                .specialAttacksInputs = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
+                                            {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
+                .specialAttackData = {STAR_OF_DAVID_SPECIAL_ATTACK},
+                .leftBarNameSource = YANIV_NAME_BAR_LEFT_SOURCE,
+                .rightBarNameSource = YANIV_NAME_BAR_RIGHT_SOURCE,
                 .winText = WIN_SPRITE[CharacterType::YANIV],
             };
 
             constexpr static Character GEFEN = {
                 .name = "Gefen",
                 .sprite = GEFEN_SPRITE,
-                .specialAttackSprite = GEFEN_SPECIAL_ATTACK_SPRITE,
-                .specialAttackOffset_y = 72,
-                .specialAttacks = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
-                        {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
-                .leftBarNameSource = { 5406, 159, 163, 12 }, //Scorpion
-                .rightBarNameSource = { 5579, 159, 163, 12 },
-                .winText = WIN_SPRITE[CharacterType::GEFFEN],
+                .specialAttacksInputs = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
+                                        {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
+                .specialAttackData = {ENERGY_EXPLODTION_SPECIAL_ATTACK},
+                .leftBarNameSource = GEFEN_NAME_BAR_LEFT_SOURCE,
+                .rightBarNameSource = GEFEN_NAME_BAR_RIGHT_SOURCE,
+                .winText = WIN_SPRITE[CharacterType::GEFEN],
+            };
+
+            constexpr static Character OFEK = {
+                .name = "OFEK",
+                .sprite = OFEK_SPRITE,
+                .specialAttacksInputs = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
+                                        {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
+                .specialAttackData = {OFEK_SPECIAL_ATTACK_1},
+                .leftBarNameSource = OFEK_NAME_BAR_LEFT_SOURCE,
+                .rightBarNameSource = OFEK_NAME_BAR_RIGHT_SOURCE,
+                .winText = WIN_SPRITE[CharacterType::OFEK],
             };
 
             constexpr static Character YONATAN = {
                 .name = "MOSHE",
                 .sprite = MOSHE_SPRITE,
-                .specialAttackSprite = MOSHE_SPECIAL_ATTACK_SPRITE,
-                .specialAttackOffset_y = 88,
-                .specialAttacks = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
+                .specialAttacksInputs = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
                             {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
-                .leftBarNameSource = { 5406, 189, 163, 12 }, //Sonya
-                .rightBarNameSource = { 5579, 189, 163, 12 },
+                .specialAttackData = {ERORR_SPECIAL_ATTACK},
+                .leftBarNameSource = YONATAN_NAME_BAR_LEFT_SOURCE,
+                .rightBarNameSource = YONATAN_NAME_BAR_RIGHT_SOURCE,
                 .winText = WIN_SPRITE[CharacterType::YONATAN],
             };
 
@@ -550,6 +611,7 @@ namespace mortal_kombat
                 ITAMAR,
                 YANIV,
                 GEFEN,
+                OFEK,
                 YONATAN
             };
         };
