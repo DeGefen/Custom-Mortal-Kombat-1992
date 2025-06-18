@@ -8,11 +8,13 @@ static constexpr SDL_FRect YANIV_NAME_BAR_LEFT_SOURCE = {5406, 129, 163, 12};
 static constexpr SDL_FRect YANIV_NAME_BAR_RIGHT_SOURCE = {5579, 129, 163, 12};
 static constexpr SDL_FRect GEFEN_NAME_BAR_LEFT_SOURCE = {5406, 159, 163, 12};
 static constexpr SDL_FRect GEFEN_NAME_BAR_RIGHT_SOURCE = {5579, 159, 163, 12};
+static constexpr SDL_FRect OFEK_NAME_BAR_LEFT_SOURCE = {5406, 144, 163, 12};
+static constexpr SDL_FRect OFEK_NAME_BAR_RIGHT_SOURCE = {5579, 144, 163, 12};
 static constexpr SDL_FRect YONATAN_NAME_BAR_LEFT_SOURCE = {5406, 189, 163, 12};
 static constexpr SDL_FRect YONATAN_NAME_BAR_RIGHT_SOURCE = {5579, 189, 163, 12};
 
 
-static constexpr SpecialAttackData MOSHE_SPECIAL_ATTACK_1 = {
+static constexpr SpecialAttackData ERORR_SPECIAL_ATTACK = {
     .HitType = State::TORSO_HIT,
     .type = SpecialAttackState::SPECIAL_1_ATTACK,
     .isBullet = true,
@@ -50,7 +52,7 @@ static constexpr SpecialAttackData ITAMAR_SPECIAL_ATTACK_1 = {
     .specialAttackSprite = ITAMAR_SPECIAL_ATTACK_SPRITE
 };
 
-static constexpr SpecialAttackData YANIV_SPECIAL_ATTACK_1 = {
+static constexpr SpecialAttackData STAR_OF_DAVID_SPECIAL_ATTACK = {
     .HitType = State::TORSO_HIT,
     .type = SpecialAttackState::SPECIAL_1_ATTACK,
     .isBullet = true,
@@ -69,7 +71,7 @@ static constexpr SpecialAttackData YANIV_SPECIAL_ATTACK_1 = {
     .specialAttackSprite = YANIV_SPECIAL_ATTACK_SPRITE
 };
 
-static constexpr SpecialAttackData GEFEN_SPECIAL_ATTACK_1 = {
+static constexpr SpecialAttackData ENERGY_EXPLODTION_SPECIAL_ATTACK = {
     .HitType = State::UPPERCUT_HIT,
     .type = SpecialAttackState::SPECIAL_1_ATTACK,
     .isBullet = false,
@@ -88,3 +90,21 @@ static constexpr SpecialAttackData GEFEN_SPECIAL_ATTACK_1 = {
     .specialAttackSprite = GEFEN_SPECIAL_ATTACK_SPRITE
 };
 
+static constexpr SpecialAttackData OFEK_SPECIAL_ATTACK_1 = {
+    .HitType = State::UPPERCUT_HIT,
+    .type = SpecialAttackState::SPECIAL_1_ATTACK,
+    .isBullet = false,
+    .moveCharacter = false,
+    .explode = false,
+    .noReverse = false,
+    .movement = 0.0f,
+    .damage = 10.0f,
+    .hitboxWidth = 256.0f * CHARACTER_SCALE,
+    .hitboxHeight = 256.0f * CHARACTER_SCALE,
+    .hitboxOffsetX = 0.0f,
+    .hitboxOffsetY = 0.0f,
+    .duration = 39, // Duration of the special attack
+    .explosionDuration = 0,
+    .scale = 1.4f,
+    .specialAttackSprite = GEFEN_SPECIAL_ATTACK_SPRITE
+};

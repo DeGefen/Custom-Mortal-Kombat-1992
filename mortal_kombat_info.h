@@ -64,19 +64,11 @@ namespace mortal_kombat
     /// @brief Enum CharacterType hold the different character types.
     enum class CharacterType
     {
-        CAGE,
-        KANO,
-        RAIDEN,
-        LIU_KANG,
-        SCORPION,
-        SUBZERO,
-        SONYA,
-        GORO,
-        SHANG_TSUNG,
         MOSHE,
         ITAMAR,
         YANIV,
         GEFEN,
+        OFEK,
         YONATAN
     };
 
@@ -294,30 +286,67 @@ namespace mortal_kombat
             {8 , 0, 64, 256, 256, 5}, //SPECIAL 1
     }};
 
+    // OFEK SPRITE SHEET
+    static constexpr std::array<SpriteInfo, CHARACTER_SPRITE_SIZE>
+    OFEK_SPRITE_ARRAY{{
+        {22, 0, 0, 196, 196}, //Block
+        {14, 0, 196, 196, 196}, //Crouch
+        {12, 0, 392, 196, 196}, //Crouch Block
+        {18, 0, 588, 196, 196}, //Crouch Hit
+        {26, 0, 784, 196, 196}, //Die
+        {19, 0, 1176, 196, 196}, //Fall
+        {28, 0, 980, 196, 196}, //Fall INPLACE
+        {15, 0, 1372, 196, 196}, //Getup
+        {8, 0, 1568, 196, 196}, //Head Hit
+        {16, 0, 1764, 196, 196}, //High Kick
+        {12, 0, 1960, 196, 196}, //High Punch
+        {20, 0, 2156, 196, 196}, //High Sweep Kick
+        {36, 0, 2352, 196, 196}, //Idle
+        {10, 0, 2548, 196, 196}, //Jump
+        {11, 0, 2940, 196, 196}, //Jump Back
+        {15, 0, 3136, 196, 196}, //Jump Kick
+        {13, 0, 3332, 196, 196}, //KnowBack
+        {3, 0, 2744, 196, 196}, //Land
+        {23, 0, 3528, 196, 196}, //Low Kick
+        {14, 0, 3724, 196, 196}, //Low Punch
+        {17, 0, 3920, 196, 196}, //Low Sweep
+        {11, 0, 4116, 196, 196}, //Roll
+        {30, 0, 4312, 196, 196}, //Special 1
+        {30, 0, 4312, 196, 196}, //Special 2
+        {30, 0, 4312, 196, 196}, //Special 3
+        {19, 0, 4508, 196, 196}, //Torso Hit
+        {7, 0, 4704, 196, 196}, //Turn
+        {16, 0, 4900, 196, 196}, //Upper Cut
+        {19, 0, 5096, 196, 196}, //Uppercut Hit
+        {19, 0, 5292, 196, 196}, //Walk
+        {19, 0, 5292, 196, 196}, //Walk
+        {30, 0, 5488, 196, 196}, //Win
+    }};
+
+
+    static constexpr std::array<SpriteInfo, SPECIAL_ATTACK_SPRITE_SIZE>
+        OFEK_SPECIAL_SPRITE_ARRAY{{
+            {8 , 0, 64, 256, 256, 5}, //SPECIAL 1
+    }};
+
     static constexpr SpriteData<State, CHARACTER_SPRITE_SIZE> MOSHE_SPRITE(MOSHE_SPRITE_ARRAY);
     static constexpr SpriteData<State, CHARACTER_SPRITE_SIZE> ITAMAR_SPRITE(ITAMAR_SPRITE_ARRAY);
     static constexpr SpriteData<State, CHARACTER_SPRITE_SIZE> YANIV_SPRITE(YANIV_SPRITE_ARRAY);
     static constexpr SpriteData<State, CHARACTER_SPRITE_SIZE> GEFEN_SPRITE(GEFEN_SPRITE_ARRAY);
+    static constexpr SpriteData<State, CHARACTER_SPRITE_SIZE> OFEK_SPRITE(OFEK_SPRITE_ARRAY);
     static constexpr SpriteData<SpecialAttackState, SPECIAL_ATTACK_SPRITE_SIZE> MOSHE_SPECIAL_ATTACK_SPRITE(MOSHE_SPECIAL_SPRITE_ARRAY);
     static constexpr SpriteData<SpecialAttackState, SPECIAL_ATTACK_SPRITE_SIZE> ITAMAR_SPECIAL_ATTACK_SPRITE(ITAMAR_SPECIAL_SPRITE_ARRAY);
     static constexpr SpriteData<SpecialAttackState, SPECIAL_ATTACK_SPRITE_SIZE> YANIV_SPECIAL_ATTACK_SPRITE(YANIV_SPECIAL_SPRITE_ARRAY);
     static constexpr SpriteData<SpecialAttackState, SPECIAL_ATTACK_SPRITE_SIZE> GEFEN_SPECIAL_ATTACK_SPRITE(GEFEN_SPECIAL_SPRITE_ARRAY);
+    static constexpr SpriteData<SpecialAttackState, SPECIAL_ATTACK_SPRITE_SIZE> OFEK_SPECIAL_ATTACK_SPRITE(OFEK_SPECIAL_SPRITE_ARRAY);
 
     static constexpr std::array<SpriteInfo, WIN_SPRITE_BY_CHARACTER_SIZE>
     WIN_SPRITE_BY_CHARACTER_ARRAY{{
-        {2, 3714, 15, 329, 52}, // Cage
-        {2, 3714, 67, 329, 52}, // Kano
-        {2, 3714, 119, 329, 52}, // Raiden
-        {2, 3714, 171, 329, 52}, // Liu Kang
-        {2, 3714, 223, 329, 52}, // Scorpion
-        {2, 3714, 275, 329, 52}, // Sub-zero
-        {2, 3714, 327, 329, 52}, // Sonya
-        {2, 3714, 379, 329, 52}, // Goro
-        {2, 3714, 431, 329, 52}, // Shang Tsung
-        {2, 3714, 15, 329, 52}, // Moshe = Cage
+        {2, 3714, 15, 329, 52}, //Moshe = Cage
         {2, 3714, 67, 329, 52}, //Itamar = Kano
         {2, 3714, 119, 329, 52}, //Yaniv = Raiden
-        {2, 3714, 223, 329, 52}, //Geffen = Scorpion
+        {2, 3714, 223, 329, 52}, //Gefen = Scorpion
+        {2, 3714, 223, 329, 52}, //Ofek = Scorpion
         {2, 3714, 327, 329, 52}, //Yonatan = Sonya
     }};
 
