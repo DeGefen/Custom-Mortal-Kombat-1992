@@ -12,10 +12,10 @@ namespace bagel
 	struct Bagel
 	{
 		bool	DynamicResize = false;
-		int		IdBagSize = 5;
-		int		InitialEntities = 30;
+		int		IdBagSize = 100;
+		int		InitialEntities = 100;
 		int		InitialPackedSize = 5;
-		int		MaxComponents = 10;
+		int		MaxComponents = 20;
 	};
 
 	template <class T> struct Storage;

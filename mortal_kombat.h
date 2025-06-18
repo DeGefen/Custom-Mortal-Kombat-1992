@@ -66,7 +66,7 @@ namespace mortal_kombat
         static constexpr int WINDOW_HEIGHT = 600.0f;
         static constexpr int WINDOW_SCALE = 100.0f;
 
-        static constexpr int BOUNDARY_WIDTH = 500.0f;
+        static constexpr int BOUNDARY_WIDTH = 10.0f;
 
         static constexpr float CHARACTER_SCALE = 1.5f;
         static constexpr float CHARACTER_WIDTH = 50;
@@ -275,6 +275,7 @@ namespace mortal_kombat
             SpecialAttackState type = SpecialAttackState::NONE; // Type of the special attack
             bool isBullet = false; // Whether the special attack is a projectile
             bool moveCharacter = false; // Whether the special attack moves the character
+            bool explode = false;
             float movement = 0.0f; // Movement speed of the special attack
             float damage = 0.0f; // Damage dealt by the special attack
             float hitboxWidth = 0.0f; // Width of the hitbox
@@ -283,19 +284,20 @@ namespace mortal_kombat
             float hitboxOffsetY = 0.0f; // Y offset of the hitbox
             float duration = 0; // Duration of the special attack
             float explosionDuration = 0; // Duration of the explosion
+            float scale = 1.0f; // Scale of the special
 
             SpriteData<SpecialAttackState, SPECIAL_ATTACK_SPRITE_SIZE> specialAttackSprite;
 
             b2Vec2 getAttackPosition(const float x, const float y) const
             {
-                return getPosition(x + (hitboxWidth * CHARACTER_SCALE / 2.0f),
-                                    y - (hitboxHeight * CHARACTER_SCALE / 2.0f));
+                return getPosition(x + (specialAttackSprite[type].w * scale * CHARACTER_SCALE / 2.0f),
+                                    y + (specialAttackSprite[type].h * scale * CHARACTER_SCALE / 2.0f));
             }
 
             b2Vec2 getAttackPosition(const Position& position) const
             {
-                return getPosition(position.x + (hitboxWidth * CHARACTER_SCALE / 2.0f),
-                                    position.y - (hitboxHeight * CHARACTER_SCALE / 2.0f));
+                return getPosition(position.x + (specialAttackSprite[type].w * scale * CHARACTER_SCALE / 2.0f),
+                                    position.y + (specialAttackSprite[type].h * scale * CHARACTER_SCALE / 2.0f));
             }
         };
 
@@ -308,14 +310,14 @@ namespace mortal_kombat
             SpriteData<State, CHARACTER_SPRITE_SIZE> sprite;
             // SpecialAttack are times 2 because of the direction
             Input specialAttacksInputs[SPECIAL_ATTACKS_COUNT * 2][COMBO_LENGTH] = {};
-            SpecialAttackData specialAttackData[SPECIAL_ATTACKS_COUNT] = {};
+            SpecialAttackData specialAttackData[SPECIAL_ATTACKS_COUNT];
             SDL_FRect leftBarNameSource{};
             SDL_FRect rightBarNameSource{};
             SpriteInfo winText;
 
             SpecialAttackData& getSpecialAttackData(State state)
             {
-                assert (state < State::SPECIAL_1 || state > State::SPECIAL_3 && "Invalid state for special attack data");
+                assert(state >= State::SPECIAL_1 && state <= State::SPECIAL_3 && "Invalid state for special attack data");
                 return specialAttackData[static_cast<int>(state) - static_cast<int>(State::SPECIAL_1)];
             }
         };
@@ -369,6 +371,18 @@ namespace mortal_kombat
         static b2Vec2 getPosition(const float x, const float y)
         {
             return {x / WINDOW_SCALE, y / WINDOW_SCALE};
+        }
+
+        static b2Vec2 getCharPosition(const Position& position)
+        {
+            return {(position.x + CHAR_SQUARE_WIDTH * CHARACTER_SCALE / 2.0f ) / WINDOW_SCALE,
+                    (position.y + CHAR_SQUARE_HEIGHT * CHARACTER_SCALE / 2.0f) / WINDOW_SCALE};
+        }
+
+        static b2Vec2 getCharPosition(const float x, const float y)
+        {
+            return {(x + CHAR_SQUARE_WIDTH * CHARACTER_SCALE / 2.0f) / WINDOW_SCALE,
+                    (y + CHAR_SQUARE_HEIGHT * CHARACTER_SCALE / 2.0f) / WINDOW_SCALE};
         }
 
         /// @brief Renders entities with position and texture components to the screen.
