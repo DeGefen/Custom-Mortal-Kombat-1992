@@ -283,6 +283,8 @@ namespace mortal_kombat
             float hitboxHeight = 0.0f; // Height of the hitbox
             float hitboxOffsetX = 0.0f; // X offset of the hitbox
             float hitboxOffsetY = 0.0f; // Y offset of the hitbox
+            int attackTriggerFrame = 0.0f; // Frame at which the attack is triggered
+            int movementDuration = 0.0f; // Duration of the movement
             float duration = 0; // Duration of the special attack
             float explosionDuration = 0; // Duration of the explosion
             float scale = 1.0f; // Scale of the special
@@ -556,7 +558,7 @@ namespace mortal_kombat
                 .sprite = ITAMAR_SPRITE,
                 .specialAttacksInputs = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
                                             {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
-                .specialAttackData = {ITAMAR_SPECIAL_ATTACK_1},
+                .specialAttackData = {HURRICANE_KICK_SPEICIAL_ATTACK},
                 .leftBarNameSource = ITAMAR_NAME_BAR_LEFT_SOURCE,
                 .rightBarNameSource = ITAMAR_NAME_BAR_RIGHT_SOURCE,
                 .winText = WIN_SPRITE[CharacterType::ITAMAR],
@@ -589,7 +591,7 @@ namespace mortal_kombat
                 .sprite = OFEK_SPRITE,
                 .specialAttacksInputs = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
                                         {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
-                .specialAttackData = {OFEK_SPECIAL_ATTACK_1},
+                .specialAttackData = {CORKSCREW_KIP_UP_SPECIAL_ATTACK},
                 .leftBarNameSource = OFEK_NAME_BAR_LEFT_SOURCE,
                 .rightBarNameSource = OFEK_NAME_BAR_RIGHT_SOURCE,
                 .winText = WIN_SPRITE[CharacterType::OFEK],

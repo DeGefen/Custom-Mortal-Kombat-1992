@@ -169,7 +169,7 @@ namespace mortal_kombat
             {31, 0, 784, 196, 196}, //Die
             {26, 0, 980, 196, 196}, //Fall
             {18, 0, 1176, 196, 196}, //Fall Inplace
-            {13, 0, 1372, 196, 196}, //Getup
+            {23, 0, 1372, 196, 196}, //Getup
             {7, 0, 1568, 196, 196}, //Head Hit
             {11, 0, 1764, 196, 196}, //High Kick
             {15, 0, 1960, 196, 196}, //High Punch
@@ -184,20 +184,21 @@ namespace mortal_kombat
             {10, 0, 3724, 196, 196}, //Low Punch
             {20, 0, 3920, 196, 196}, //Low Sweep
             {10, 0, 4116, 196, 196}, //Roll
-            {28, 0, 4312, 196, 196}, //Special 1
-            {28, 0, 4312, 196, 196}, //Special 2
-            {28, 0, 4312, 196, 196}, //Special 3
-            {8, 0, 4508, 196, 196}, //Torso Hit
-            {5, 0, 4704, 196, 196}, //Turn
-            {13, 0, 4900, 196, 196}, //Uppercut
-            {18, 0, 5096, 196, 196}, //Uppercut Hit
-            {19, 0, 5292, 196, 196}, //Walk
-            {19, 0, 5292, 196, 196}, //Walk Back
-            {27, 0, 5488, 196, 196}, //Win
+            {25, 0, 4312, 196, 196}, //Special 1
+            {28, 0, 4508, 196, 196}, //Special 2
+            {0, 0, 0, 0, 0}, //Special 3
+            {8, 0, 4704, 196, 196}, //Torso Hit
+            {5, 0, 4900, 196, 196}, //Turn
+            {13, 0, 5096, 196, 196}, //Uppercut
+            {18, 0, 5292, 196, 196}, //Uppercut Hit
+            {19, 0, 5488, 196, 196}, //Walk
+            {19, 0, 5488, 196, 196}, //Walk Back
+            {27, 0, 5684, 196, 196}, //Win
     }};
 
     static constexpr std::array<SpriteInfo, SPECIAL_ATTACK_SPRITE_SIZE>
         ITAMAR_SPECIAL_SPRITE_ARRAY{{
+            {0, 0, 0, 0, 0, 1}, //SPECIAL 1
     }};
 
     // YANIV SPRITE SHEET
@@ -294,39 +295,39 @@ namespace mortal_kombat
         {12, 0, 392, 196, 196}, //Crouch Block
         {18, 0, 588, 196, 196}, //Crouch Hit
         {26, 0, 784, 196, 196}, //Die
-        {19, 0, 1176, 196, 196}, //Fall
-        {28, 0, 980, 196, 196}, //Fall INPLACE
-        {15, 0, 1372, 196, 196}, //Getup
+        {28, 0, 980, 196, 196}, //Fall
+        {19, 0, 1176, 196, 196}, //Fall Inplace
+        {22, 0, 1372, 196, 196}, //Getup
         {8, 0, 1568, 196, 196}, //Head Hit
         {16, 0, 1764, 196, 196}, //High Kick
         {12, 0, 1960, 196, 196}, //High Punch
         {20, 0, 2156, 196, 196}, //High Sweep Kick
         {36, 0, 2352, 196, 196}, //Idle
         {10, 0, 2548, 196, 196}, //Jump
-        {11, 0, 2940, 196, 196}, //Jump Back
-        {15, 0, 3136, 196, 196}, //Jump Kick
-        {13, 0, 3332, 196, 196}, //KnowBack
-        {3, 0, 2744, 196, 196}, //Land
+        {11, 0, 2744, 196, 196}, //Jump Back
+        {15, 0, 2940, 196, 196}, //Jump Kick
+        {13, 0, 3136, 196, 196}, //KnowBack
+        {3, 0, 3332, 196, 196}, //Landing
         {23, 0, 3528, 196, 196}, //Low Kick
         {14, 0, 3724, 196, 196}, //Low Punch
         {17, 0, 3920, 196, 196}, //Low Sweep
         {11, 0, 4116, 196, 196}, //Roll
-        {30, 0, 4312, 196, 196}, //Special 1
-        {30, 0, 4312, 196, 196}, //Special 2
-        {30, 0, 4312, 196, 196}, //Special 3
-        {19, 0, 4508, 196, 196}, //Torso Hit
-        {7, 0, 4704, 196, 196}, //Turn
-        {16, 0, 4900, 196, 196}, //Upper Cut
-        {19, 0, 5096, 196, 196}, //Uppercut Hit
-        {19, 0, 5292, 196, 196}, //Walk
-        {19, 0, 5292, 196, 196}, //Walk
-        {30, 0, 5488, 196, 196}, //Win
+        {45, 0, 4312, 196, 196}, //Special 1
+        {30, 0, 4508, 196, 196}, //Special 2
+        {0, 0, 0, 0, 0}, //Special 3
+        {19, 0, 4704, 196, 196}, //Torso Hit
+        {7, 0, 4900, 196, 196}, //Turn
+        {16, 0, 5096, 196, 196}, //Upper Cut
+        {19, 0, 5292, 196, 196}, //Uppercut Hit
+        {19, 0, 5488, 196, 196}, //Walk
+        {19, 0, 5488, 196, 196}, //Walk Back
+        {63, 0, 5684, 196, 196}, //Win
     }};
 
 
     static constexpr std::array<SpriteInfo, SPECIAL_ATTACK_SPRITE_SIZE>
         OFEK_SPECIAL_SPRITE_ARRAY{{
-            {8 , 0, 64, 256, 256, 5}, //SPECIAL 1
+            {0, 0, 0, 0, 0, 1}, //SPECIAL 1
     }};
 
     static constexpr SpriteData<State, CHARACTER_SPRITE_SIZE> MOSHE_SPRITE(MOSHE_SPRITE_ARRAY);

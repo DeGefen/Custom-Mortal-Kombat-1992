@@ -509,6 +509,9 @@ namespace mortal_kombat
                     {
                         auto& specialAttackData = entity.get<Character>().getSpecialAttackData(entity.get<PlayerState>().state);
                         movement.vx = specialAttackData.movement
+                                        * ((playerState.currFrame >= specialAttackData.attackTriggerFrame
+                                            && playerState.currFrame < specialAttackData.movementDuration)
+                                            ? 1.0f : 0.0f) // Only move if the attack is triggered and within the movement duration
                                         * (specialAttackData.moveCharacter ? 1.0f : 0.0f)
                                         * (playerState.direction == LEFT ? -1.0f : 1.0f)
                                         * (collider.isRightBoundarySensor && playerState.direction == RIGHT ? 0.0f : 1.0f)
@@ -882,7 +885,7 @@ namespace mortal_kombat
                 {
                     auto& [x, y] = entity.get<Position>();
                     if (playerState.isSpecialAttack
-                        && (playerState.currFrame % character.sprite[playerState.state].frameCount) == character.sprite[playerState.state].frameCount / 2)
+                        && (playerState.currFrame == character.getSpecialAttackData(playerState.state).attackTriggerFrame))
                     {
                         createSpecialAttack(x, y,
                                             character.getSpecialAttackData(playerState.state),
