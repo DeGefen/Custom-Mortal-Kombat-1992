@@ -915,30 +915,36 @@ namespace mortal_kombat
             auto& p2Char = player2.get<Character>();
 
             auto handleWinLose = [&](const bagel::Entity& loser, const bagel::Entity& winner) {
-                createWinText(winner.get<Character>());
-                bool isJumping = loser.get<PlayerState>().isJumping;
-                loser.get<PlayerState>().reset();
-                loser.get<PlayerState>().state = State::DIE;
-                loser.get<PlayerState>().busy = true;
-                loser.get<PlayerState>().isLaying = true;
-                loser.get<PlayerState>().isJumping = isJumping;
-                loser.get<PlayerState>().busyFrames = loser.get<Character>().sprite[loser.get<PlayerState>().state].frameCount;
-                loser.get<PlayerState>().freezeFrame = loser.get<PlayerState>().busyFrames - 1;
-                loser.get<PlayerState>().freezeFrameDuration = 1000;
+                if (loser.get<PlayerState>().state != State::DIE)
+                {
+                    createWinText(winner.get<Character>());
+                    const bool isJumping = loser.get<PlayerState>().isJumping;
+                    loser.get<PlayerState>().reset();
+                    loser.get<PlayerState>().state = State::DIE;
+                    loser.get<PlayerState>().busy = true;
+                    loser.get<PlayerState>().isLaying = true;
+                    loser.get<PlayerState>().isJumping = isJumping;
+                    loser.get<PlayerState>().busyFrames = loser.get<Character>().sprite[loser.get<PlayerState>().state].frameCount;
+                    loser.get<PlayerState>().freezeFrame = loser.get<PlayerState>().busyFrames - 1;
+                    loser.get<PlayerState>().freezeFrameDuration = 1000;
+                }
 
-                isJumping = winner.get<PlayerState>().isJumping;
-                winner.get<PlayerState>().reset();
-                winner.get<PlayerState>().state = State::WIN;
-                winner.get<PlayerState>().busy = true;
-                winner.get<PlayerState>().isJumping = isJumping;
-                winner.get<PlayerState>().busyFrames = winner.get<Character>().sprite[winner.get<PlayerState>().state].frameCount;
-                winner.get<PlayerState>().freezeFrame = winner.get<PlayerState>().busyFrames - 1;
-                winner.get<PlayerState>().freezeFrameDuration = 1000;
+                if (!winner.get<PlayerState>().busy)
+                {
+                    const bool isJumping = winner.get<PlayerState>().isJumping;
+                    winner.get<PlayerState>().reset();
+                    winner.get<PlayerState>().state = State::WIN;
+                    winner.get<PlayerState>().busy = true;
+                    winner.get<PlayerState>().isJumping = isJumping;
+                    winner.get<PlayerState>().busyFrames = winner.get<Character>().sprite[winner.get<PlayerState>().state].frameCount;
+                    winner.get<PlayerState>().freezeFrame = winner.get<PlayerState>().busyFrames - 1;
+                    winner.get<PlayerState>().freezeFrameDuration = 1000;
+                }
             };
 
-            if (p1Health.health <= 0 && p1State.state != State::DIE)
+            if (p1Health.health <= 0 && p2State.state != State::WIN)
                 handleWinLose(player1, player2);
-            if (p2Health.health <= 0 && p2State.state != State::DIE)
+            if (p2Health.health <= 0 && p1State.state != State::WIN)
                 handleWinLose(player2, player1);
 
             // Direction update
@@ -1044,10 +1050,10 @@ namespace mortal_kombat
             bagel::Entity eBody = bagel::Entity{(*e_s)};
             bagel::Entity eSensor = bagel::Entity{(*e_b)};
 
-            if (eBody.test(maskPlayer) && eSensor.test(maskPlayer))
+            if (eBody.test(maskPlayer) && eSensor.test(maskPlayer)) // Player sensor
                 eBody.get<Collider>().isPlayerSensor = true;
 
-            if (eBody.test(maskPlayer) && eSensor.has<Boundary>())
+            if (eBody.test(maskPlayer) && eSensor.has<Boundary>()) // Boundary sensor
             {
                 if (eSensor.get<Boundary>().side == LEFT)
                     eBody.get<Collider>().isLeftBoundarySensor = true;
@@ -1055,9 +1061,27 @@ namespace mortal_kombat
                     eBody.get<Collider>().isRightBoundarySensor = true;
             }
 
-            if (eSensor.test(maskAttack) && eBody.test(maskPlayer)
+            if (eSensor.test(maskAttack) && eBody.test(maskPlayer) // Attack hit, call CombatSystem
                 && eSensor.get<Attack>().attacker != eBody.get<PlayerState>().playerNumber)
                 CombatSystem(eSensor, eBody);
+
+            if (eSensor.test(maskAttack) && eBody.test(maskAttack) // handles jump attacks player sync
+                && eSensor.get<Attack>().attacker == eBody.get<Attack>().attacker
+                && eSensor.get<Attack>().type == State::JUMP_KICK
+                && eBody.get<Attack>().type == State::JUMP_KICK)
+            {
+                if (eBody.get<Time>().time <= eSensor.get<Time>().time)
+                {
+                    eBody.get<Time>().time = 0; // Remove the old attack
+                    b2Body_SetTransform(s, b2Body_GetPosition(b), b2Rot_identity);
+                }
+                else
+                {
+                    eSensor.get<Time>().time = 0; // Remove the old attack
+                    b2Body_SetTransform(b, b2Body_GetPosition(s), b2Rot_identity);
+                }
+            }
+
         }
 
         // Handle end events
@@ -1509,46 +1533,52 @@ namespace mortal_kombat
 
         void MK::createAttack(float x, float y, State type, int playerNumber, bool direction) const
         {
-
             float width = 0.0f;
             float height = 0.0f;
-            float xOffset = 0.0f;
-            float yOffset = 0.0f;
+            float hitboxOffsetX = 0.0f;
+            float hitboxOffsetY = 0.0f;
+            float attackLifeTime = Attack::ATTACK_LIFE_TIME;
 
             switch (type)
             {
-                case State::JUMP_KICK:
                 case State::LOW_PUNCH:
                 case State::HIGH_PUNCH:
                     width = 70.0f;
                     height = 40.0f;
-                    xOffset = width / 2.0f * (direction == LEFT ? -1.0f : 1.0f);
-                    yOffset = 40.0f;
+                    hitboxOffsetX = width / 2.0f * (direction == LEFT ? -1.0f : 1.0f);
+                    hitboxOffsetY = 40.0f;
                     break;
                 case State::LOW_KICK:
                 case State::HIGH_KICK:
                     width = 95.0f;
                     height = 40.0f;
-                    xOffset = width / 2.0f * (direction == LEFT ? -1.0f : 1.0f);
-                    yOffset = 0.0f;
+                    hitboxOffsetX = width / 2.0f * (direction == LEFT ? -1.0f : 1.0f);
+                    hitboxOffsetY = 0.0f;
                     break;
                 case State::HIGH_SWEEP_KICK:
                     width = 95.0f;
                     height = 40.0f;
-                    xOffset = width / 2.0f * (direction == LEFT ? -1.0f : 1.0f);
-                    yOffset = 40.0f;
+                    hitboxOffsetX = width / 2.0f * (direction == LEFT ? -1.0f : 1.0f);
+                    hitboxOffsetY = 40.0f;
                     break;
                 case State::LOW_SWEEP_KICK:
                     width = 85.0f;
                     height = 40.0f;
-                    xOffset = width / 2.0f * (direction == LEFT ? -1.0f : 1.0f);
-                    yOffset = -40.0f;
+                    hitboxOffsetX = width / 2.0f * (direction == LEFT ? -1.0f : 1.0f);
+                    hitboxOffsetY = -40.0f;
                     break;
                 case State::UPPERCUT:
                     width = 50.0f;
                     height = 40.0f;
-                    xOffset = width / 2.0f * (direction == LEFT ? -1.0f : 1.0f);
-                    yOffset = 40.0f;
+                    hitboxOffsetX = width / 2.0f * (direction == LEFT ? -1.0f : 1.0f);
+                    hitboxOffsetY = 40.0f;
+                    break;
+                case State::JUMP_KICK:
+                    width = 50.0f;
+                    height = 40.0f;
+                    hitboxOffsetX = width / 2.0f * (direction == LEFT ? -1.0f : 1.0f);
+                    hitboxOffsetY = -40.0f;
+                    attackLifeTime = 3;
                     break;
                 default: // Type is not a valid attack
                     return;
@@ -1556,14 +1586,15 @@ namespace mortal_kombat
 
             b2BodyDef bodyDef = b2DefaultBodyDef();
             bodyDef.type = b2_kinematicBody;
-            bodyDef.position= getCharPosition(x + xOffset, y + yOffset);
+            bodyDef.position= getCharPosition(x + hitboxOffsetX * CHARACTER_SCALE,
+                                              y + hitboxOffsetY * CHARACTER_SCALE);
 
             b2ShapeDef shapeDef = b2DefaultShapeDef();
             shapeDef.enableSensorEvents = true;
             shapeDef.isSensor = true;
 
-            b2Polygon boxShape = b2MakeBox((width / 2.0f) / WINDOW_SCALE,
-                                           (height / 2.0f) / WINDOW_SCALE);
+            b2Polygon boxShape = b2MakeBox(width * CHARACTER_SCALE / 2.0f / WINDOW_SCALE,
+                                           height * CHARACTER_SCALE / 2.0f / WINDOW_SCALE);
 
             b2BodyId body = b2CreateBody(boxWorld, &bodyDef);
             b2ShapeId shape = b2CreatePolygonShape(body, &shapeDef, &boxShape);
@@ -1572,7 +1603,7 @@ namespace mortal_kombat
             entity.addAll(Position{x, y},
                           Collider{body, shape},
                           Attack{type, playerNumber},
-                          Time{Attack::ATTACK_LIFE_TIME});
+                          Time{attackLifeTime});
 
             b2Body_SetUserData(body, new bagel::ent_type{entity.entity()});
         }

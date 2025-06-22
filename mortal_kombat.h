@@ -545,8 +545,8 @@ namespace mortal_kombat
             constexpr static Character MOSHE = {
                 .name = "Moshe",
                 .sprite = MOSHE_SPRITE,
-                .specialAttacksInputs = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
-                                            {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
+                .specialAttacksInputs = {{Inputs::HIGH_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_RIGHT, Inputs::UP},
+                                            {Inputs::HIGH_PUNCH, Inputs::LEFT | Inputs::DIRECTION_LEFT, Inputs::UP}},
                 .specialAttackData = {ERORR_SPECIAL_ATTACK},
                 .leftBarNameSource = MOSHE_NAME_BAR_LEFT_SOURCE,
                 .rightBarNameSource = MOSHE_NAME_BAR_RIGHT_SOURCE,
@@ -556,8 +556,8 @@ namespace mortal_kombat
             constexpr static Character ITAMAR = {
                 .name = "Itamar",
                 .sprite = ITAMAR_SPRITE,
-                .specialAttacksInputs = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
-                                            {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
+                .specialAttacksInputs = {{Inputs::HIGH_KICK, Inputs::DOWN, Inputs::LEFT | Inputs::DIRECTION_RIGHT},
+                                            {Inputs::HIGH_KICK, Inputs::DOWN, Inputs::RIGHT | Inputs::DIRECTION_LEFT}},
                 .specialAttackData = {HURRICANE_KICK_SPEICIAL_ATTACK},
                 .leftBarNameSource = ITAMAR_NAME_BAR_LEFT_SOURCE,
                 .rightBarNameSource = ITAMAR_NAME_BAR_RIGHT_SOURCE,
@@ -567,8 +567,8 @@ namespace mortal_kombat
             constexpr static Character YANIV = {
                 .name = "Yaniv",
                 .sprite = YANIV_SPRITE,
-                .specialAttacksInputs = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
-                                            {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
+                .specialAttacksInputs = {{Inputs::LOW_PUNCH, Inputs::DOWN, Inputs::LEFT | Inputs::DIRECTION_RIGHT},
+                                            {Inputs::LOW_PUNCH, Inputs::DOWN, Inputs::RIGHT | Inputs::DIRECTION_LEFT}},
                 .specialAttackData = {STAR_OF_DAVID_SPECIAL_ATTACK},
                 .leftBarNameSource = YANIV_NAME_BAR_LEFT_SOURCE,
                 .rightBarNameSource = YANIV_NAME_BAR_RIGHT_SOURCE,
@@ -578,8 +578,8 @@ namespace mortal_kombat
             constexpr static Character GEFEN = {
                 .name = "Gefen",
                 .sprite = GEFEN_SPRITE,
-                .specialAttacksInputs = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
-                                        {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
+                .specialAttacksInputs = {{Inputs::LOW_PUNCH, Inputs::UP, Inputs::DOWN},
+                                            {Inputs::LOW_PUNCH, Inputs::UP, Inputs::DOWN}},
                 .specialAttackData = {ENERGY_EXPLODTION_SPECIAL_ATTACK},
                 .leftBarNameSource = GEFEN_NAME_BAR_LEFT_SOURCE,
                 .rightBarNameSource = GEFEN_NAME_BAR_RIGHT_SOURCE,
@@ -589,15 +589,15 @@ namespace mortal_kombat
             constexpr static Character OFEK = {
                 .name = "OFEK",
                 .sprite = OFEK_SPRITE,
-                .specialAttacksInputs = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
-                                        {Inputs::LOW_PUNCH, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
+                .specialAttacksInputs = {{Inputs::LOW_KICK, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
+                                        {Inputs::LOW_KICK, Inputs::RIGHT | Inputs::DIRECTION_LEFT, Inputs::LEFT | Inputs::DIRECTION_LEFT}},
                 .specialAttackData = {CORKSCREW_KIP_UP_SPECIAL_ATTACK},
                 .leftBarNameSource = OFEK_NAME_BAR_LEFT_SOURCE,
                 .rightBarNameSource = OFEK_NAME_BAR_RIGHT_SOURCE,
                 .winText = WIN_SPRITE[CharacterType::OFEK],
             };
 
-            constexpr static Character YONATAN = {
+            constexpr static Character YONATAN = { // WIP
                 .name = "MOSHE",
                 .sprite = MOSHE_SPRITE,
                 .specialAttacksInputs = {{Inputs::LOW_PUNCH, Inputs::LEFT | Inputs::DIRECTION_RIGHT, Inputs::RIGHT | Inputs::DIRECTION_RIGHT},
