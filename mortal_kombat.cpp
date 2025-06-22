@@ -117,11 +117,12 @@ namespace mortal_kombat
 
     // Load character images
     SDL_Texture* characterTextures[numOfFighters] = {
-        TextureSystem::getTexture(ren, "res/moshe_w_pic.png", TextureSystem::IgnoreColorKey::NONE),
-        TextureSystem::getTexture(ren, "res/itamar_w_pic.png", TextureSystem::IgnoreColorKey::NONE),
-        TextureSystem::getTexture(ren, "res/yaniv_w_pic.png", TextureSystem::IgnoreColorKey::NONE),
-        TextureSystem::getTexture(ren, "res/gefen_w_pic.png", TextureSystem::IgnoreColorKey::NONE),
-        TextureSystem::getTexture(ren, "res/yonatan_w_pic.png", TextureSystem::IgnoreColorKey::NONE)
+        TextureSystem::getTexture(ren, "res/menu_moshe.png", TextureSystem::IgnoreColorKey::NONE),
+        TextureSystem::getTexture(ren, "res/menu_itamar.png", TextureSystem::IgnoreColorKey::NONE),
+        TextureSystem::getTexture(ren, "res/menu_yaniv.png", TextureSystem::IgnoreColorKey::NONE),
+        TextureSystem::getTexture(ren, "res/menu_gefen.png", TextureSystem::IgnoreColorKey::NONE),
+        TextureSystem::getTexture(ren, "res/menu_ofek.png", TextureSystem::IgnoreColorKey::NONE),
+        TextureSystem::getTexture(ren, "res/menu_yonatan.png", TextureSystem::IgnoreColorKey::NONE)
     };
 
     SDL_FRect srcRect = {900, 381, 64*numOfFighters + 10, 183};
@@ -163,13 +164,13 @@ namespace mortal_kombat
                         if (selectedP2 % GRID_COLS > 0) selectedP2--;
                         break;
                     case SDLK_RIGHT:
-                        if (selectedP2 % GRID_COLS < GRID_COLS - 1) selectedP2++;
+                        if (selectedP2 % GRID_COLS < GRID_COLS - 2) selectedP2++;
                         break;
                     case SDLK_A:
                         if (selectedP1 % GRID_COLS > 0) selectedP1--;
                         break;
                     case SDLK_D:
-                        if (selectedP1 % GRID_COLS < GRID_COLS - 1) selectedP1++;
+                        if (selectedP1 % GRID_COLS < GRID_COLS - 2) selectedP1++;
                         break;
                     case SDLK_RETURN:
                     case SDLK_KP_ENTER:
