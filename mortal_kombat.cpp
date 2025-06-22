@@ -654,12 +654,13 @@ namespace mortal_kombat
 
     SDL_FRect MK::getSpriteFrame(const Character& character, State action, const int frame)
     {
-        return {static_cast<float>(character.sprite[action].x
-                    + ((frame % character.sprite[(action)].frameCount)
-                    * (NEXT_FRAME_OFFSET + character.sprite[action].w))) + 1
-                ,static_cast<float>(character.sprite[action].y) + 1
-                ,static_cast<float>(character.sprite[action].w) - 2
-                ,static_cast<float>(character.sprite[action].h) - 2};
+        const auto& sprite = character.sprite[action];
+        return {static_cast<float>(sprite.x
+                    + (((frame / sprite.frameDuration) % sprite.frameCount)
+                    * (NEXT_FRAME_OFFSET + sprite.w))) + 1
+                ,static_cast<float>(sprite.y) + 1
+                ,static_cast<float>(sprite.w) - 2
+                ,static_cast<float>(sprite.h) - 2};
     }
 
     SDL_FRect MK::getSpriteFrame(const SpecialAttackData& specialAttackData, SpecialAttackState action, int frame)
