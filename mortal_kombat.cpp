@@ -1,5 +1,6 @@
 #include "mortal_kombat_info.h"
 #include "mortal_kombat.h"
+#include "SoundManager.h"
 #include <iostream>
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
@@ -9,12 +10,25 @@ namespace mortal_kombat
 {
     std::unordered_map<std::string, SDL_Texture*> MK::TextureSystem::textureCache;
 
+    void MK::loadSoundEffects() {
+        SoundManager::loadSoundEffect("punch", "res/sound/sound effects/hitsounds/mk1-00048.mp3");
+        SoundManager::loadSoundEffect("start", "res/sound/sound effects/music cues/start sound.mp3");
+    }
+
     void MK::start()
     {
         if (!SDL_Init(SDL_INIT_VIDEO)) {
             std::cout << SDL_GetError() << std::endl;
             return;
         }
+
+        if (!SoundManager::init()) {
+            SDL_Log("Sound system failed to init");
+            return;
+        }
+
+        loadSoundEffects();
+        SoundManager::playSoundEffect("start");
 
         if (!SDL_CreateWindowAndRenderer(
                 "MK1992", WINDOW_WIDTH, WINDOW_HEIGHT, 0, &win, &ren)) {
@@ -33,7 +47,11 @@ namespace mortal_kombat
         createBoundary(LEFT);
         createBoundary(RIGHT);
         initialScreen();  // Show intro splash before the game loop
+
+        SoundManager::playMusic("res/sound/background music/Character Select.mp3");
         auto [p1Index, p2Index] = chooseFighterScreen();
+        SoundManager::stopMusic();
+
         Character character1 = Characters::ALL_CHARACTERS[p1Index];
         Character character2 = Characters::ALL_CHARACTERS[p2Index];
 
@@ -360,6 +378,7 @@ namespace mortal_kombat
         RenderSystem();
         HealthBarSystem();
         AttackDecaySystem();
+        SoundSystem();
 
         if (Uint32 frameTime = SDL_GetTicks() - frameStart; FRAME_DELAY > frameTime) {
             SDL_Delay(FRAME_DELAY - frameTime);
@@ -572,6 +591,9 @@ namespace mortal_kombat
 
                 switch (playerState.state)
                 {
+                    case State::LOW_PUNCH:
+                        SoundManager::playSoundEffect("punch");
+                        break;
                     case State::WALK_BACKWARDS:
                         break;
                     case State::WALK_FORWARDS:
@@ -580,18 +602,15 @@ namespace mortal_kombat
                         break;
                     case State::JUMP:
                         if (!playerState.isJumping) {
-                            playerState.isJumping = true;
                         }
                         break;
                     case State::JUMP_BACK:
                         if (!playerState.isJumping) {
-                            playerState.isJumping = true;
                         }
                         break;
                     case State::ROLL:
                         // Forward jump
                         if (!playerState.isJumping) {
-                            playerState.isJumping = true;
                         }
                         break;
                     case State::UPPERCUT_HIT:
@@ -601,8 +620,7 @@ namespace mortal_kombat
                         }
                         break;
                     default:
-                        if (!playerState.isJumping)
-
+                        //if (!playerState.isJumping)
                         break;
                     }
 
@@ -613,9 +631,6 @@ namespace mortal_kombat
             }
         }
     }
-
-
-
 
 
     void MK::RenderSystem() const

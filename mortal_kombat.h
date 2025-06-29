@@ -47,6 +47,8 @@ namespace mortal_kombat
         void gameIteration(int& frame_count) const;
         bool isGameOver() const;
 
+        static void loadSoundEffects();
+
         /// @brief Initializes the game.
         void start();
 
@@ -54,7 +56,6 @@ namespace mortal_kombat
         void destroy() const;
 
     private:
-
         static constexpr int FPS = 60;
         static constexpr float	BOX2D_STEP = 1.f/FPS;
 
