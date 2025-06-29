@@ -431,7 +431,7 @@ namespace mortal_kombat
                                         * (collider.isPlayerSensor ? 0.0f : 1.0f)
                                         * (collider.isRightBoundarySensor && playerState.direction == RIGHT ? 0.0f : 1.0f)
                                         * (collider.isLeftBoundarySensor && playerState.direction == LEFT ? 0.0f : 1.0f);
-;
+
                         break;
                     case State::KICKBACK_TORSO_HIT:
                         movement.vx = KICKBACK_SPEED
@@ -548,6 +548,75 @@ namespace mortal_kombat
             }
         }
     }
+
+
+    void MK::SoundSystem()
+    {
+        // static const bagel::Mask mask = bagel::MaskBuilder()
+        //     .set<Position>()
+        //     .set<Movement>()
+        //     .set<Collider>()
+        //     .build();
+
+        static const bagel::Mask maskPlayer = bagel::MaskBuilder()
+            .set<PlayerState>()
+            .set<Character>()
+            .build();
+
+        for (bagel::ent_type e = {0}; e.id <= bagel::World::maxId().id; ++e.id)
+        {
+            if (bagel::Entity entity{e}; entity.test(maskPlayer))
+            {
+                auto& playerState = entity.get<PlayerState>();
+                auto& character = entity.get<Character>();
+
+                switch (playerState.state)
+                {
+                    case State::WALK_BACKWARDS:
+                        break;
+                    case State::WALK_FORWARDS:
+                        break;
+                    case State::KICKBACK_TORSO_HIT:
+                        break;
+                    case State::JUMP:
+                        if (!playerState.isJumping) {
+                            playerState.isJumping = true;
+                        }
+                        break;
+                    case State::JUMP_BACK:
+                        if (!playerState.isJumping) {
+                            playerState.isJumping = true;
+                        }
+                        break;
+                    case State::ROLL:
+                        // Forward jump
+                        if (!playerState.isJumping) {
+                            playerState.isJumping = true;
+                        }
+                        break;
+                    case State::UPPERCUT_HIT:
+                        if (playerState.currFrame < character.sprite[playerState.state].frameCount / 2)
+                        {
+                            break;
+                        }
+                        break;
+                    default:
+                        if (!playerState.isJumping)
+
+                        break;
+                    }
+
+                    if (playerState.isSpecialAttack)
+                    {
+                        auto& specialAttackData = entity.get<Character>().getSpecialAttackData(entity.get<PlayerState>().state);
+                    }
+            }
+        }
+    }
+
+
+
+
 
     void MK::RenderSystem() const
 {
