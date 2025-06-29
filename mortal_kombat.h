@@ -151,6 +151,7 @@ namespace mortal_kombat
             int currFrame = 0; //  Frames spent in the current state
             int freezeFrame = NONE; // Frame to freeze the player
             int freezeFrameDuration = 0; // Duration of the freeze-frame
+            State soundState = state; //stance to play the sound of
 
             /// @brief Resets the player state to default values.
             void reset()

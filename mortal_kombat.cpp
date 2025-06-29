@@ -50,7 +50,8 @@ namespace mortal_kombat
 
         SoundManager::playMusic("res/sound/background music/Character Select.mp3");
         auto [p1Index, p2Index] = chooseFighterScreen();
-        SoundManager::stopMusic();
+        //SoundManager::stopMusic();
+        SoundManager::playMusic("res/sound/background music/academic tel aviv theme.mp3");
 
         Character character1 = Characters::ALL_CHARACTERS[p1Index];
         Character character2 = Characters::ALL_CHARACTERS[p2Index];
@@ -571,12 +572,6 @@ namespace mortal_kombat
 
     void MK::SoundSystem()
     {
-        // static const bagel::Mask mask = bagel::MaskBuilder()
-        //     .set<Position>()
-        //     .set<Movement>()
-        //     .set<Collider>()
-        //     .build();
-
         static const bagel::Mask maskPlayer = bagel::MaskBuilder()
             .set<PlayerState>()
             .set<Character>()
@@ -589,7 +584,7 @@ namespace mortal_kombat
                 auto& playerState = entity.get<PlayerState>();
                 auto& character = entity.get<Character>();
 
-                switch (playerState.state)
+                switch (playerState.soundState)
                 {
                     case State::LOW_PUNCH:
                         SoundManager::playSoundEffect("punch");
@@ -622,12 +617,13 @@ namespace mortal_kombat
                     default:
                         //if (!playerState.isJumping)
                         break;
-                    }
+                }
 
                     if (playerState.isSpecialAttack)
                     {
                         auto& specialAttackData = entity.get<Character>().getSpecialAttackData(entity.get<PlayerState>().state);
                     }
+                playerState.soundState = State::STANCE;
             }
         }
     }
@@ -940,7 +936,7 @@ namespace mortal_kombat
                 if (shouldChangeState)
                 {
                     playerState.reset();
-                    playerState.state = state;
+                    playerState.state = playerState.soundState = state;
                     playerState.currFrame = (playerState.isCrouching && state == State::CROUCH) ? 2 : 0;
                     playerState.busyFrames = character.sprite[playerState.state].frameCount;
                     playerState.freezeFrame = freezeFrame;
