@@ -11,8 +11,10 @@ namespace mortal_kombat
     std::unordered_map<std::string, SDL_Texture*> MK::TextureSystem::textureCache;
 
     void MK::loadSoundEffects() {
-        SoundManager::loadSoundEffect("punch", "res/sound/sound effects/hitsounds/mk1-00048.mp3");
         SoundManager::loadSoundEffect("start", "res/sound/sound effects/music cues/start sound.mp3");
+        SoundManager::loadSoundEffect("punch", "res/sound/sound effects/hitsounds/mk1-00048.mp3");
+        SoundManager::loadSoundEffect("player 1 press", "res/sound/sound effects/ui/player 1 press.mp3");
+        SoundManager::loadSoundEffect("player 2 press", "res/sound/sound effects/ui/player 2 press.mp3");
     }
 
     void MK::start()
@@ -181,15 +183,19 @@ namespace mortal_kombat
                 switch (event.key.key) {
                     case SDLK_LEFT:
                         if (selectedP2 % GRID_COLS > 0) selectedP2--;
+                        SoundManager::playSoundEffect("player 2 press");
                         break;
                     case SDLK_RIGHT:
                         if (selectedP2 % GRID_COLS < GRID_COLS - 2) selectedP2++;
+                        SoundManager::playSoundEffect("player 2 press");
                         break;
                     case SDLK_A:
                         if (selectedP1 % GRID_COLS > 0) selectedP1--;
+                        SoundManager::playSoundEffect("player 1 press");
                         break;
                     case SDLK_D:
                         if (selectedP1 % GRID_COLS < GRID_COLS - 2) selectedP1++;
+                        SoundManager::playSoundEffect("player 1 press");
                         break;
                     case SDLK_RETURN:
                     case SDLK_KP_ENTER:
