@@ -28,6 +28,19 @@ namespace mortal_kombat
         SoundManager::loadSoundEffect("jump male2", "res/sound/sound effects/male/male 2/jump/mk1-00214.mp3");
         SoundManager::loadSoundEffect("jump male2", "res/sound/sound effects/male/male 2/jump/mk1-00215.mp3");
         SoundManager::loadSoundEffect("jump male2", "res/sound/sound effects/male/male 2/jump/mk1-00216.mp3");
+        SoundManager::loadSoundEffect("jump female", "res/sound/sound effects/female/jump/jump1.mp3");
+        SoundManager::loadSoundEffect("jump female", "res/sound/sound effects/female/jump/jump2.mp3");
+        SoundManager::loadSoundEffect("jump female", "res/sound/sound effects/female/jump/jump3.mp3");
+        SoundManager::loadSoundEffect("jump female", "res/sound/sound effects/female/jump/jump4.mp3");
+
+        SoundManager::loadSoundEffect("uppercut hit male1", "res/sound/sound effects/male/male 1/really getting hit/uppercut hit1.mp3");
+        SoundManager::loadSoundEffect("uppercut hit male1", "res/sound/sound effects/male/male 1/really getting hit/uppercut hit2.mp3");
+        SoundManager::loadSoundEffect("uppercut hit male2", "res/sound/sound effects/male/male 2/really getting hit/uppercut hit1.mp3");
+        SoundManager::loadSoundEffect("uppercut hit female", "res/sound/sound effects/female/really getting hit/uppercut hit1.mp3");
+        SoundManager::loadSoundEffect("uppercut hit female", "res/sound/sound effects/female/really getting hit/uppercut hit2.mp3");
+
+        SoundManager::loadSoundEffect("windy attack", "res/sound/sound effects/hitsounds/wind/windy attack.mp3");
+        SoundManager::loadSoundEffect("landing", "res/sound/sound effects/hitsounds/landing.mp3");
     }
 
     void MK::start()
@@ -615,14 +628,14 @@ namespace mortal_kombat
                     case State::JUMP_KICK:
                         soundEffect = "attack";
                         break;
-                    case State::UPPERCUT:
-                    case State::HIGH_SWEEP_KICK:
-                        //todo: windy sound
-                        break;
                     case State::JUMP:
                     case State::JUMP_BACK:
                     case State::ROLL: //Jump Forward
                         soundEffect = "jump";
+                        break;
+                    case State::UPPERCUT:
+                    case State::HIGH_SWEEP_KICK:
+                        soundEffect = "windy attack";
                         break;
                     case State::CROUCH_HIT:
                     case State::HEAD_HIT:
@@ -631,10 +644,10 @@ namespace mortal_kombat
                         //todo: hit sound
                         break;
                     case State::UPPERCUT_HIT:
-                        //todo: special hit sound
+                        soundEffect = "uppercut hit";
                         break;
-                    case State::LANDING: //assuming this is after jump
-                        //todo: really small sound
+                    case State::LANDING: //doesn't work for some reason
+                        soundEffect = "landing";
                         break;
                     case State::FALL_INPLACE:
                         //todo: probably fall down hard sound. But it might not look good with this animation, so another sound might be needed.
@@ -654,7 +667,7 @@ namespace mortal_kombat
                     }
 
                 std::string sex;
-                if (soundEffect == "attack" || soundEffect == "jump") {
+                if (soundEffect == "attack" || soundEffect == "jump" || soundEffect == "uppercut hit") {
                     if (character.sex == MALE) {
                         if (playerState.playerNumber == 1)
                             sex = " male1";
