@@ -12,10 +12,22 @@ namespace mortal_kombat
 
     void MK::loadSoundEffects() {
         SoundManager::loadSoundEffect("start", "res/sound/sound effects/music cues/start sound.mp3");
-        SoundManager::loadSoundEffect("punch", "res/sound/sound effects/hitsounds/mk1-00048.mp3");
-        SoundManager::loadSoundEffect("punch", "res/sound/sound effects/hitsounds/mk1-00049.mp3");
         SoundManager::loadSoundEffect("player 1 press", "res/sound/sound effects/ui/player 1 press.mp3");
         SoundManager::loadSoundEffect("player 2 press", "res/sound/sound effects/ui/player 2 press.mp3");
+
+        SoundManager::loadSoundEffect("attack male1", "res/sound/sound effects/male/male 1/attack/mk1-00192.mp3");
+        SoundManager::loadSoundEffect("attack male1", "res/sound/sound effects/male/male 1/attack/mk1-00193.mp3");
+        SoundManager::loadSoundEffect("attack male2", "res/sound/sound effects/male/male 2/attack/mk1-00208.mp3");
+        SoundManager::loadSoundEffect("attack male2", "res/sound/sound effects/male/male 2/attack/mk1-00209.mp3");
+        SoundManager::loadSoundEffect("attack female", "res/sound/sound effects/female/attack/short.mp3");
+        SoundManager::loadSoundEffect("attack female", "res/sound/sound effects/female/attack/long.mp3");
+
+        SoundManager::loadSoundEffect("jump male1", "res/sound/sound effects/male/male 1/jump/mk1-00199.mp3");
+        SoundManager::loadSoundEffect("jump male1", "res/sound/sound effects/male/male 1/jump/mk1-00200.mp3");
+        SoundManager::loadSoundEffect("jump male2", "res/sound/sound effects/male/male 2/jump/mk1-00213.mp3");
+        SoundManager::loadSoundEffect("jump male2", "res/sound/sound effects/male/male 2/jump/mk1-00214.mp3");
+        SoundManager::loadSoundEffect("jump male2", "res/sound/sound effects/male/male 2/jump/mk1-00215.mp3");
+        SoundManager::loadSoundEffect("jump male2", "res/sound/sound effects/male/male 2/jump/mk1-00216.mp3");
     }
 
     void MK::start()
@@ -31,7 +43,6 @@ namespace mortal_kombat
         }
 
         loadSoundEffects();
-        SoundManager::playSoundEffect("start");
 
         if (!SDL_CreateWindowAndRenderer(
                 "MK1992", WINDOW_WIDTH, WINDOW_HEIGHT, 0, &win, &ren)) {
@@ -47,14 +58,16 @@ namespace mortal_kombat
 
         createBackground("res/Background.png");
 
+        SoundManager::playSoundEffect("start");
+
         createBoundary(LEFT);
         createBoundary(RIGHT);
         initialScreen();  // Show intro splash before the game loop
 
         SoundManager::playMusic("res/sound/background music/Character Select.mp3");
         auto [p1Index, p2Index] = chooseFighterScreen();
-        //SoundManager::stopMusic();
-        SoundManager::playMusic("res/sound/background music/academic tel aviv theme.mp3");
+        SoundManager::stopMusic();
+        //SoundManager::playMusic("res/sound/background music/academic tel aviv theme.mp3");
 
         Character character1 = Characters::ALL_CHARACTERS[p1Index];
         Character character2 = Characters::ALL_CHARACTERS[p2Index];
@@ -591,38 +604,47 @@ namespace mortal_kombat
                 auto& playerState = entity.get<PlayerState>();
                 auto& character = entity.get<Character>();
 
+                std::string soundEffect;
                 switch (playerState.soundState)
                 {
                     case State::LOW_PUNCH:
-                        SoundManager::playSoundEffect("punch");
+                    case State::HIGH_PUNCH:
+                    case State::LOW_KICK:
+                    case State::HIGH_KICK:
+                    case State::LOW_SWEEP_KICK:
+                    case State::JUMP_KICK:
+                        soundEffect = "attack";
                         break;
-                    case State::WALK_BACKWARDS:
-                        break;
-                    case State::WALK_FORWARDS:
-                        break;
-                    case State::KICKBACK_TORSO_HIT:
+                    case State::UPPERCUT:
+                    case State::HIGH_SWEEP_KICK:
+                        //todo: windy sound
                         break;
                     case State::JUMP:
-                        if (!playerState.isJumping) {
-                        }
-                        break;
                     case State::JUMP_BACK:
-                        if (!playerState.isJumping) {
-                        }
+                    case State::ROLL: //Jump Forward
+                        soundEffect = "jump";
                         break;
-                    case State::ROLL:
-                        // Forward jump
-                        if (!playerState.isJumping) {
-                        }
+                    case State::CROUCH_HIT:
+                    case State::HEAD_HIT:
+                    case State::KICKBACK_TORSO_HIT: //probably
+                    case State::TORSO_HIT: //probably
+                        //todo: hit sound
                         break;
                     case State::UPPERCUT_HIT:
-                        if (playerState.currFrame < character.sprite[playerState.state].frameCount / 2)
-                        {
-                            break;
-                        }
+                        //todo: special hit sound
+                        break;
+                    case State::LANDING: //assuming this is after jump
+                        //todo: really small sound
+                        break;
+                    case State::FALL_INPLACE:
+                        //todo: probably fall down hard sound. But it might not look good with this animation, so another sound might be needed.
+                        break;
+                    case State::SPECIAL_1:
+                    case State::SPECIAL_2:
+                    case State::SPECIAL_3:
+                        //todo: need to find a sound for this (might not be the same for all those sounds
                         break;
                     default:
-                        //if (!playerState.isJumping)
                         break;
                 }
 
@@ -630,6 +652,21 @@ namespace mortal_kombat
                     {
                         auto& specialAttackData = entity.get<Character>().getSpecialAttackData(entity.get<PlayerState>().state);
                     }
+
+                std::string sex;
+                if (soundEffect == "attack" || soundEffect == "jump") {
+                    if (character.sex == MALE) {
+                        if (playerState.playerNumber == 1)
+                            sex = " male1";
+                        else
+                            sex = " male2";
+                    }
+                    else if (character.sex == FEMALE)
+                        sex = " female";
+                }
+
+                if (!soundEffect.empty())
+                    SoundManager::playSoundEffect(soundEffect + sex);
                 playerState.soundState = State::STANCE;
             }
         }
