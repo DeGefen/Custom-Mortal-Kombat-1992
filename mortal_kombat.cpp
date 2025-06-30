@@ -13,6 +13,7 @@ namespace mortal_kombat
     void MK::loadSoundEffects() {
         SoundManager::loadSoundEffect("start", "res/sound/sound effects/music cues/start sound.mp3");
         SoundManager::loadSoundEffect("punch", "res/sound/sound effects/hitsounds/mk1-00048.mp3");
+        SoundManager::loadSoundEffect("punch", "res/sound/sound effects/hitsounds/mk1-00049.mp3");
         SoundManager::loadSoundEffect("player 1 press", "res/sound/sound effects/ui/player 1 press.mp3");
         SoundManager::loadSoundEffect("player 2 press", "res/sound/sound effects/ui/player 2 press.mp3");
     }

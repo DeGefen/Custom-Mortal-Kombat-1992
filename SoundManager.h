@@ -7,13 +7,17 @@
 
 #include <SDL3/SDL.h>
 #include <SDL3_mixer/SDL_mixer.h>
-#include <string>
 #include <unordered_map>
+#include <iostream>
+#include <random>
+#include <string>
 
 class SoundManager {
 private:
-    static std::unordered_map<std::string, Mix_Chunk*> s_SoundEffects;
+    static std::unordered_multimap<std::string, Mix_Chunk*> soundEffects;
     static Mix_Music* s_CurrentMusic;
+
+    static Mix_Chunk* getRandomSound(const std::string& key);
 
 public:
     static bool init();
