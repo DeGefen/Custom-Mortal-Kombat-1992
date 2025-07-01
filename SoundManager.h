@@ -11,6 +11,8 @@
 #include <iostream>
 #include <random>
 #include <string>
+#include <thread>
+#include <chrono>
 
 class SoundManager {
 private:
@@ -27,7 +29,8 @@ public:
     static void stopMusic();
 
     static bool loadSoundEffect(const std::string& name, const std::string& path);
-    static bool playSoundEffect(const std::string& name, int loops = 0);
+    static bool playSoundEffect(const std::string& name);
+    static bool playSoundEffect(const std::string& name, int delayMs);
 
 };
 

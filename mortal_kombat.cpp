@@ -46,6 +46,7 @@ namespace mortal_kombat
 
         SoundManager::loadSoundEffect("windy attack", "res/sound/sound effects/hitsounds/wind/windy attack.mp3");
         SoundManager::loadSoundEffect("landing", "res/sound/sound effects/hitsounds/landing.mp3");
+        SoundManager::loadSoundEffect("falling down from kick", "res/sound/sound effects/hitsounds/falling down from kick.mp3");
     }
 
     void MK::start()
@@ -557,7 +558,7 @@ namespace mortal_kombat
                                 playerState.state == State::JUMP_KICK)
                             {
                                 playerState.reset();
-                                playerState.state = State::LANDING;
+                                playerState.state = playerState.soundState = State::LANDING;
                                 playerState.currFrame = 0;
                                 playerState.busy = true;
                                 playerState.busyFrames = character.sprite[State::LANDING].frameCount;
@@ -650,12 +651,13 @@ namespace mortal_kombat
                         break;
                     case State::UPPERCUT_HIT:
                         soundEffect = "uppercut hit";
+                        //todo: also add fall down hard sound. But it might not look good with this animation, so another sound might be needed.
                         break;
-                    case State::LANDING: //doesn't work for some reason
+                    case State::LANDING:
                         soundEffect = "landing";
                         break;
                     case State::FALL_INPLACE:
-                        //todo: probably fall down hard sound. But it might not look good with this animation, so another sound might be needed.
+                        SoundManager::playSoundEffect("falling down from kick", 200);
                         break;
                     case State::SPECIAL_1:
                     case State::SPECIAL_2:
@@ -668,6 +670,7 @@ namespace mortal_kombat
 
                 static bool playedGameOverSound = false;
                 if (isGameOver() && !playedGameOverSound) {
+                    SoundManager::stopMusic();
                     soundEffect = "game over";
                     playedGameOverSound = true;
                 }
@@ -991,7 +994,7 @@ namespace mortal_kombat
                 if (playerState.isLaying && !playerState.busy && !playerState.isJumping)
                 {
                     playerState.reset();
-                    playerState.state = State::GETUP;
+                    playerState.state = playerState.soundState = State::GETUP;
                     playerState.busyFrames = character.sprite[playerState.state].frameCount;
                     playerState.busy = true;
                 }
@@ -1068,7 +1071,7 @@ namespace mortal_kombat
                     createWinText(winner.get<Character>());
                     const bool isJumping = loser.get<PlayerState>().isJumping;
                     loser.get<PlayerState>().reset();
-                    loser.get<PlayerState>().state = State::DIE;
+                    loser.get<PlayerState>().state = loser.get<PlayerState>().soundState = State::DIE;
                     loser.get<PlayerState>().busy = true;
                     loser.get<PlayerState>().isLaying = true;
                     loser.get<PlayerState>().isJumping = isJumping;
@@ -1081,7 +1084,7 @@ namespace mortal_kombat
                 {
                     const bool isJumping = winner.get<PlayerState>().isJumping;
                     winner.get<PlayerState>().reset();
-                    winner.get<PlayerState>().state = State::WIN;
+                    winner.get<PlayerState>().state = winner.get<PlayerState>().soundState = State::WIN;
                     winner.get<PlayerState>().busy = true;
                     winner.get<PlayerState>().isJumping = isJumping;
                     winner.get<PlayerState>().busyFrames = winner.get<Character>().sprite[winner.get<PlayerState>().state].frameCount;
@@ -1103,7 +1106,7 @@ namespace mortal_kombat
                 if (!state.isJumping && !state.busy && state.direction != newDir) {
                     state.direction = newDir;
                     state.reset();
-                    state.state = State::TURN;
+                    state.state = state.soundState = State::TURN;
                     state.busy = true;
                     state.busyFrames = character.sprite[state.state].frameCount;
                 }
@@ -1304,11 +1307,11 @@ namespace mortal_kombat
             playerState.reset();
             if (isCrouching)
             {
-                playerState.state = State::CROUCH_HIT;
+                playerState.state = playerState.soundState = State::CROUCH_HIT;
             }
             else if (isJumping)
             {
-                playerState.state = State::FALL;
+                playerState.state = playerState.soundState = State::FALL;
                 playerState.busyFrames = character.sprite[playerState.state].frameCount;
                 playerState.freezeFrame = playerState.busyFrames - 1;
                 playerState.freezeFrameDuration = 2;
@@ -1317,7 +1320,7 @@ namespace mortal_kombat
             }
             else
             {
-                playerState.state = State::TORSO_HIT;
+                playerState.state = playerState.soundState = State::TORSO_HIT;
             }
             playerState.busyFrames = character.sprite[playerState.state].frameCount;
             playerState.busy = true;
@@ -1327,11 +1330,11 @@ namespace mortal_kombat
             playerState.reset();
             if (isCrouching)
             {
-                playerState.state = State::CROUCH_HIT;
+                playerState.state = playerState.soundState = State::CROUCH_HIT;
             }
             else if (isJumping)
             {
-                playerState.state = State::FALL;
+                playerState.state = playerState.soundState = State::FALL;
                 playerState.busyFrames = character.sprite[playerState.state].frameCount;
                 playerState.freezeFrame = playerState.busyFrames - 1;
                 playerState.freezeFrameDuration = 2;
@@ -1340,7 +1343,7 @@ namespace mortal_kombat
             }
             else
             {
-                playerState.state = State::HEAD_HIT ;
+                playerState.state = playerState.soundState = State::HEAD_HIT ;
             }
             playerState.busyFrames = character.sprite[playerState.state].frameCount;
             playerState.busy = true;
@@ -1350,7 +1353,7 @@ namespace mortal_kombat
             playerState.reset();
             if (isJumping)
             {
-                playerState.state = State::FALL;
+                playerState.state = playerState.soundState = State::FALL;
                 playerState.busyFrames = character.sprite[playerState.state].frameCount;
                 playerState.freezeFrame = playerState.busyFrames - 1;
                 playerState.freezeFrameDuration = 2;
@@ -1359,7 +1362,7 @@ namespace mortal_kombat
             }
             else
             {
-                playerState.state = State::KICKBACK_TORSO_HIT ;
+                playerState.state = playerState.soundState = State::KICKBACK_TORSO_HIT ;
             }
             playerState.busyFrames = character.sprite[playerState.state].frameCount;
             playerState.busy = true;
@@ -1370,7 +1373,7 @@ namespace mortal_kombat
             playerState.reset();
             if (isJumping)
             {
-                playerState.state = State::FALL;
+                playerState.state = playerState.soundState = State::FALL;
                 playerState.busyFrames = character.sprite[playerState.state].frameCount;
                 playerState.freezeFrame = playerState.busyFrames - 1;
                 playerState.freezeFrameDuration = 2;
@@ -1379,7 +1382,7 @@ namespace mortal_kombat
             }
             else
             {
-                playerState.state = State::HEAD_HIT ;
+                playerState.state = playerState.soundState = State::HEAD_HIT ;
             }
             playerState.busyFrames = character.sprite[playerState.state].frameCount;
             playerState.busy = true;
@@ -1389,12 +1392,12 @@ namespace mortal_kombat
             playerState.reset();
             if (isJumping)
             {
-                playerState.state = State::FALL;
+                playerState.state = playerState.soundState = State::FALL;
                 playerState.isJumping = true;
             }
             else
             {
-                playerState.state = State::FALL_INPLACE ;
+                playerState.state = playerState.soundState = State::FALL_INPLACE ;
             }
             playerState.busyFrames = character.sprite[playerState.state].frameCount;
             playerState.freezeFrame = playerState.busyFrames - 1;
@@ -1409,7 +1412,7 @@ namespace mortal_kombat
             {
                 playerState.isJumping = true;
             }
-            playerState.state = State::FALL;
+            playerState.state = playerState.soundState = State::FALL;
             playerState.busyFrames = character.sprite[playerState.state].frameCount;
             playerState.freezeFrame = playerState.busyFrames - 1;
             playerState.freezeFrameDuration = 2;
@@ -1421,12 +1424,12 @@ namespace mortal_kombat
             playerState.reset();
             if (isJumping)
             {
-                playerState.state = State::FALL;
+                playerState.state = playerState.soundState = State::FALL;
                 playerState.isJumping = true;
             }
             else
             {
-                playerState.state = State::UPPERCUT_HIT ;
+                playerState.state = playerState.soundState = State::UPPERCUT_HIT ;
             }
             playerState.busyFrames = character.sprite[playerState.state].frameCount;
             playerState.freezeFrame = playerState.busyFrames - 1;
@@ -1446,12 +1449,12 @@ namespace mortal_kombat
                 playerState.reset();
                 if (isCrouching)
                 {
-                    playerState.state = State::CROUCH_HIT;
+                    playerState.state = playerState.soundState = State::CROUCH_HIT;
                     playerState.busyFrames = character.sprite[playerState.state].frameCount;
                 }
                 else if (isJumping)
                 {
-                    playerState.state = State::FALL;
+                    playerState.state = playerState.soundState = State::FALL;
                     playerState.busyFrames = character.sprite[playerState.state].frameCount;
                     playerState.freezeFrame = playerState.busyFrames - 1;
                     playerState.freezeFrameDuration = 2;
@@ -1460,7 +1463,7 @@ namespace mortal_kombat
                 }
                 else
                 {
-                    playerState.state = specialAttackData.HitType;
+                    playerState.state = playerState.soundState = specialAttackData.HitType;
                     playerState.busyFrames = character.sprite[playerState.state].frameCount;
                     if (playerState.state == State::FALL
                         || playerState.state == State::FALL_INPLACE

@@ -101,7 +101,7 @@ Mix_Chunk* SoundManager::getRandomSound(const std::string& key) {
     return it->second;
 }
 
-bool SoundManager::playSoundEffect(const std::string& name, int loops) {
+bool SoundManager::playSoundEffect(const std::string& name) {
     Mix_Chunk* chunk = getRandomSound(name);
     if (chunk == nullptr) {
         SDL_Log("Sound effect '%s' not found", name.c_str());
@@ -109,10 +109,19 @@ bool SoundManager::playSoundEffect(const std::string& name, int loops) {
     }
 
     // Channel -1 = any available
-    if (Mix_PlayChannel(-1, chunk, loops) == -1) {
+    if (Mix_PlayChannel(-1, chunk, 0) == -1) {
         SDL_Log("Failed to play sound effect '%s': %s", name.c_str(), SDL_GetError());
         return false;
     }
 
+    return true;
+}
+
+bool SoundManager::playSoundEffect(const std::string& name, int delayMs) {
+    // Spawn a thread to play the sound after a delay
+    std::thread([=]() {
+        std::this_thread::sleep_for(std::chrono::milliseconds(delayMs));
+        playSoundEffect(name);
+    }).detach(); // Detach so it runs independently
     return true;
 }
