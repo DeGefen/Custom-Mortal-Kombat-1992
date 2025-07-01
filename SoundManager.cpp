@@ -145,11 +145,11 @@ int SoundManager::findFreeChannel() {
     return -1; // None available
 }
 
-bool SoundManager::playSoundEffectWithDelay(const std::string& name, int delayMs) {
+bool SoundManager::playSoundEffectWithDelay(const std::string& name, int delayMs, int volume) {
     // Spawn a thread to play the sound after a delay
     std::thread([=]() {
         std::this_thread::sleep_for(std::chrono::milliseconds(delayMs));
-        playSoundEffect(name);
+        playSoundEffect(name, volume);
     }).detach(); // Detach so it runs independently
     return true;
 }

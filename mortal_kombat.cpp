@@ -663,28 +663,25 @@ namespace mortal_kombat
                     case State::LOW_KICK:
                     case State::HIGH_KICK:
                     case State::LOW_SWEEP_KICK:
-                        SoundManager::playSoundEffect("attack" + sex);
-                        SoundManager::playSoundEffect("wind");
+                        SoundManager::playSoundEffect("attack" + sex, 100);
+                        SoundManager::playSoundEffect("wind", 37);
                         break;
                     case State::JUMP_KICK:
-                        SoundManager::playSoundEffect("attack" + sex);
+                        SoundManager::playSoundEffect("attack" + sex, 100);
                         break;
                     case State::JUMP:
                     case State::JUMP_BACK:
                     case State::ROLL: //Jump Forward
-                        SoundManager::playSoundEffect("jump" + sex);
+                        SoundManager::playSoundEffect("jump" + sex, 55);
                         break;
                     case State::UPPERCUT:
                     case State::HIGH_SWEEP_KICK:
-                        SoundManager::playSoundEffect("hard wind");
-                        break;
-                    case State::CROUCH_HIT: //doesn't work...
-                        std::cout << "crouch hit" << std::endl;
+                        SoundManager::playSoundEffect("hard wind", 64);
                         break;
                     case State::PUNCH_HEAD_HIT:
                         std::cout << "punch head hit" << std::endl;
-                        SoundManager::playSoundEffect("hit");
-                        SoundManager::playSoundEffect("hit" + sex);
+                        SoundManager::playSoundEffect("hit", 64);
+                        SoundManager::playSoundEffect("hit" + sex, 70);
                         break;
                     case State::KICK_HEAD_HIT:
                         std::cout << "kick head hit" << std::endl;
@@ -698,12 +695,12 @@ namespace mortal_kombat
                     case State::TORSO_HIT:
                         std::cout << "torso hit" << std::endl;
                         //when punching not on head
-                        SoundManager::playSoundEffect("hit" + sex);
+                        SoundManager::playSoundEffect("hit" + sex, 70);
                         SoundManager::playSoundEffect("quiet hit");
                         break;
                     case State::UPPERCUT_HIT:
-                        SoundManager::playSoundEffect("uppercut hit" + sex);
-                        SoundManager::playSoundEffect("hard hit");
+                        SoundManager::playSoundEffect("uppercut hit" + sex, 94);
+                        SoundManager::playSoundEffect("hard hit", 110);
                         break;
                     case State::LANDING:
                         SoundManager::playSoundEffect("landing", 2);
@@ -713,12 +710,15 @@ namespace mortal_kombat
                         break;
                     case State::FALL: //after hit by high sweep kick
                         SoundManager::playSoundEffect("hard hit");
-                        SoundManager::playSoundEffectWithDelay("landing", 200); //more quiet
+                        SoundManager::playSoundEffectWithDelay("landing", 200, 20); //more quiet
                         break;
                     case State::SPECIAL_1:
                     case State::SPECIAL_2:
                     case State::SPECIAL_3:
                         //todo: need to find a sound for this (might not be the same for all those sounds
+                        break;
+                    case State::CROUCH_HIT: //doesn't work...
+                        std::cout << "crouch hit" << std::endl;
                         break;
                     default:
                         break;
