@@ -20,7 +20,7 @@ bool SoundManager::init() {
         return false;
     }
 
-    Mix_AllocateChannels(8);
+    Mix_AllocateChannels(16);
     Mix_ChannelFinished(onChannelFinished);
     return true;
 }

@@ -33,7 +33,7 @@ public:
     static void stopMusic();
 
     static bool loadSoundEffect(const std::string& name, const std::string& path);
-    static bool playSoundEffect(const std::string& name, int volume = -1); //volume range: 0-128. minus means default volume
+    static bool playSoundEffect(const std::string& name, int volume = 90); //volume range: 0-128. minus means default volume
     static bool playSoundEffectWithDelay(const std::string& name, int delayMs, int volume = -1);
 
 };

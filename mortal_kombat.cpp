@@ -109,7 +109,7 @@ namespace mortal_kombat
         SoundManager::playMusic("res/sound/background music/Character Select.mp3");
         auto [p1Index, p2Index] = chooseFighterScreen();
         SoundManager::stopMusic();
-        SoundManager::playMusic("res/sound/background music/The Courtyard.mp3", 106);
+        SoundManager::playMusic("res/sound/background music/The Courtyard.mp3", 55);
 
         Character character1 = Characters::ALL_CHARACTERS[p1Index];
         Character character2 = Characters::ALL_CHARACTERS[p2Index];
@@ -664,54 +664,54 @@ namespace mortal_kombat
                     case State::LOW_KICK:
                     case State::HIGH_KICK:
                     case State::LOW_SWEEP_KICK:
-                        SoundManager::playSoundEffect("attack" + sex, 100);
-                        SoundManager::playSoundEffect("wind", 37);
+                        SoundManager::playSoundEffect("attack" + sex, 90);
+                        SoundManager::playSoundEffect("wind", 50);
                         break;
                     case State::JUMP_KICK:
-                        SoundManager::playSoundEffect("attack" + sex, 100);
+                        SoundManager::playSoundEffect("attack" + sex, 90);
                         break;
                     case State::JUMP:
                     case State::JUMP_BACK:
                     case State::ROLL: //Jump Forward
-                        SoundManager::playSoundEffect("jump" + sex, 55);
+                        SoundManager::playSoundEffect("jump" + sex, 52);
                         break;
                     case State::UPPERCUT:
                     case State::HIGH_SWEEP_KICK:
-                        SoundManager::playSoundEffect("hard wind", 64);
+                        SoundManager::playSoundEffect("hard wind", 74);
                         break;
                     case State::PUNCH_HEAD_HIT:
                         std::cout << "punch head hit" << std::endl;
-                        SoundManager::playSoundEffect("hit", 64);
-                        SoundManager::playSoundEffect("hit" + sex, 70);
+                        SoundManager::playSoundEffect("hit", 60);
+                        SoundManager::playSoundEffect("hit" + sex, 80);
                         break;
                     case State::KICK_HEAD_HIT:
                         std::cout << "kick head hit" << std::endl;
-                        SoundManager::playSoundEffect("hard hit");
+                        SoundManager::playSoundEffect("hard hit", 74);
                         break;
                     case State::KICKBACK_TORSO_HIT:
                         std::cout << "kickback torso hit" << std::endl;
-                        SoundManager::playSoundEffect("hit");
+                        SoundManager::playSoundEffect("hit", 60);
                         //when kicking not on head
                         break;
                     case State::TORSO_HIT:
                         std::cout << "torso hit" << std::endl;
                         //when punching not on head
-                        SoundManager::playSoundEffect("hit" + sex, 70);
-                        SoundManager::playSoundEffect("quiet hit");
+                        SoundManager::playSoundEffect("hit" + sex, 60);
+                        SoundManager::playSoundEffect("quiet hit", 40);
                         break;
                     case State::UPPERCUT_HIT:
-                        SoundManager::playSoundEffect("uppercut hit" + sex, 94);
-                        SoundManager::playSoundEffect("hard hit", 110);
+                        SoundManager::playSoundEffect("uppercut hit" + sex, 90);
+                        SoundManager::playSoundEffect("hard hit", 115);
                         break;
                     case State::LANDING:
                         SoundManager::playSoundEffect("landing", 2);
                         break;
                     case State::FALL_INPLACE:
-                        SoundManager::playSoundEffectWithDelay("falling down from kick", 225);
+                        SoundManager::playSoundEffectWithDelay("falling down from kick", 225, 90);
                         break;
                     case State::FALL: //after hit by high sweep kick
-                        SoundManager::playSoundEffect("hard hit");
-                        SoundManager::playSoundEffectWithDelay("landing", 200, 20);
+                        SoundManager::playSoundEffect("hard hit", 115);
+                        SoundManager::playSoundEffectWithDelay("landing", 200, 23);
                         break;
                     case State::SPECIAL_1:
                     case State::SPECIAL_2:
