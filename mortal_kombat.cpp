@@ -706,14 +706,14 @@ namespace mortal_kombat
                         SoundManager::playSoundEffect("hard hit");
                         break;
                     case State::LANDING:
-                        SoundManager::playSoundEffect("landing"); //quiet
+                        SoundManager::playSoundEffect("landing", 2);
                         break;
                     case State::FALL_INPLACE:
-                        SoundManager::playSoundEffect("falling down from kick", 225);
+                        SoundManager::playSoundEffectWithDelay("falling down from kick", 225);
                         break;
                     case State::FALL: //after hit by high sweep kick
                         SoundManager::playSoundEffect("hard hit");
-                        SoundManager::playSoundEffect("landing", 200); //more quiet
+                        SoundManager::playSoundEffectWithDelay("landing", 200); //more quiet
                         break;
                     case State::SPECIAL_1:
                     case State::SPECIAL_2:

@@ -5,6 +5,7 @@
 #include "SoundManager.h"
 
 std::unordered_multimap<std::string, Mix_Chunk*> SoundManager::soundEffects;
+std::map<int, int> SoundManager::s_ChannelOriginalVolumes;
 Mix_Music* SoundManager::s_CurrentMusic = nullptr;
 
 bool SoundManager::init() {
@@ -18,6 +19,9 @@ bool SoundManager::init() {
         SDL_Log("Mix_OpenAudio failed: %s", SDL_GetError());
         return false;
     }
+
+    Mix_AllocateChannels(8);
+    Mix_ChannelFinished(onChannelFinished);
     return true;
 }
 
@@ -30,6 +34,15 @@ void SoundManager::shutdown() {
     soundEffects.clear();
 
     Mix_CloseAudio();
+}
+
+void SoundManager::onChannelFinished(int channel) {
+    // Restore the original volume if we had one
+    auto it = s_ChannelOriginalVolumes.find(channel);
+    if (it != s_ChannelOriginalVolumes.end()) {
+        Mix_Volume(channel, it->second); // Reset volume
+        s_ChannelOriginalVolumes.erase(it);
+    }
 }
 
 bool SoundManager::playMusic(const std::string& path, int loops) {
@@ -101,23 +114,38 @@ Mix_Chunk* SoundManager::getRandomSound(const std::string& key) {
     return it->second;
 }
 
-bool SoundManager::playSoundEffect(const std::string& name) {
+bool SoundManager::playSoundEffect(const std::string& name, int volume) {
     Mix_Chunk* chunk = getRandomSound(name);
-    if (chunk == nullptr) {
+    if (!chunk) {
         SDL_Log("Sound effect '%s' not found", name.c_str());
         return false;
     }
 
-    // Channel -1 = any available
-    if (Mix_PlayChannel(-1, chunk, 0) == -1) {
+    int channel = Mix_PlayChannel(-1, chunk, 0);
+    if (channel == -1) {
         SDL_Log("Failed to play sound effect '%s': %s", name.c_str(), SDL_GetError());
         return false;
     }
 
+    // Store the original volume
+    int originalVolume = Mix_Volume(channel, -1);
+    s_ChannelOriginalVolumes[channel] = originalVolume;
+
+    // Set volume for this playback
+    Mix_Volume(channel, volume);
+
     return true;
 }
 
-bool SoundManager::playSoundEffect(const std::string& name, int delayMs) {
+int SoundManager::findFreeChannel() {
+    int total = Mix_AllocateChannels(-1);
+    for (int i = 0; i < total; ++i) {
+        if (!Mix_Playing(i)) return i;
+    }
+    return -1; // None available
+}
+
+bool SoundManager::playSoundEffectWithDelay(const std::string& name, int delayMs) {
     // Spawn a thread to play the sound after a delay
     std::thread([=]() {
         std::this_thread::sleep_for(std::chrono::milliseconds(delayMs));

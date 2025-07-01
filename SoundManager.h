@@ -13,13 +13,17 @@
 #include <string>
 #include <thread>
 #include <chrono>
+#include <map>
 
 class SoundManager {
 private:
     static std::unordered_multimap<std::string, Mix_Chunk*> soundEffects;
+    static std::map<int, int> s_ChannelOriginalVolumes;
     static Mix_Music* s_CurrentMusic;
 
     static Mix_Chunk* getRandomSound(const std::string& key);
+    static void onChannelFinished(int channel);
+    static int findFreeChannel();
 
 public:
     static bool init();
@@ -29,8 +33,8 @@ public:
     static void stopMusic();
 
     static bool loadSoundEffect(const std::string& name, const std::string& path);
-    static bool playSoundEffect(const std::string& name);
-    static bool playSoundEffect(const std::string& name, int delayMs);
+    static bool playSoundEffect(const std::string& name, int volume = -1); //volume range: 0-128. minus means default volume
+    static bool playSoundEffectWithDelay(const std::string& name, int delayMs);
 
 };
 
