@@ -33,6 +33,14 @@ namespace mortal_kombat
         SoundManager::loadSoundEffect("jump female", "res/sound/sound effects/female/jump/jump3.mp3");
         SoundManager::loadSoundEffect("jump female", "res/sound/sound effects/female/jump/jump4.mp3");
 
+        SoundManager::loadSoundEffect("quiet hit", "res/sound/sound effects/hitsounds/hit/lvl1.mp3");
+        SoundManager::loadSoundEffect("hit", "res/sound/sound effects/hitsounds/hit/mk1-00053.mp3");
+        SoundManager::loadSoundEffect("hit", "res/sound/sound effects/hitsounds/hit/mk1-00054.mp3");
+        SoundManager::loadSoundEffect("hard hit", "res/sound/sound effects/hitsounds/hard hit/mk1-00131.mp3");
+        SoundManager::loadSoundEffect("hard hit", "res/sound/sound effects/hitsounds/hard hit/mk1-00172.mp3");
+        SoundManager::loadSoundEffect("hard hit", "res/sound/sound effects/hitsounds/hard hit/mk1-00173.mp3");
+        SoundManager::loadSoundEffect("hard hit", "res/sound/sound effects/hitsounds/hard hit/mk1-00180.mp3");
+
         SoundManager::loadSoundEffect("hit male1", "res/sound/sound effects/male/male 1/getting hit/mk1-00194.mp3");
         SoundManager::loadSoundEffect("hit male1", "res/sound/sound effects/male/male 1/getting hit/mk1-00195.mp3");
         SoundManager::loadSoundEffect("hit male1", "res/sound/sound effects/male/male 1/getting hit/mk1-00196.mp3");
@@ -55,7 +63,11 @@ namespace mortal_kombat
         SoundManager::loadSoundEffect("game over", "res/sound/sound effects/music cues/game over/mk1-00238.mp3");
         SoundManager::loadSoundEffect("game over", "res/sound/sound effects/music cues/game over/mk1-00239.mp3");
 
-        SoundManager::loadSoundEffect("windy attack", "res/sound/sound effects/hitsounds/wind/windy attack.mp3");
+        SoundManager::loadSoundEffect("hard wind", "res/sound/sound effects/hitsounds/wind/hard wind.mp3");
+        SoundManager::loadSoundEffect("wind", "res/sound/sound effects/hitsounds/wind/mk1-00059.mp3");
+        SoundManager::loadSoundEffect("wind", "res/sound/sound effects/hitsounds/wind/mk1-00060.mp3");
+        SoundManager::loadSoundEffect("wind", "res/sound/sound effects/hitsounds/wind/mk1-00061.mp3");
+
         SoundManager::loadSoundEffect("landing", "res/sound/sound effects/hitsounds/landing.mp3");
         SoundManager::loadSoundEffect("falling down from kick", "res/sound/sound effects/hitsounds/falling down from kick.mp3");
     }
@@ -644,14 +656,17 @@ namespace mortal_kombat
                 else if (character.sex == FEMALE)
                     sex = " female";
 
-                switch (playerState.soundState)
+                switch (playerState.soundState) //todo: go over effects and make some more quiet
                 {
-                    case State::LOW_PUNCH: //todo: need windy sound
-                    case State::HIGH_PUNCH://todo: need windy sound
-                    case State::LOW_KICK: //todo: need windy sound
-                    case State::HIGH_KICK: //todo: need windy sound
-                    case State::LOW_SWEEP_KICK: //todo: need windy sound
-                    case State::JUMP_KICK: //no windy sound here
+                    case State::LOW_PUNCH:
+                    case State::HIGH_PUNCH:
+                    case State::LOW_KICK:
+                    case State::HIGH_KICK:
+                    case State::LOW_SWEEP_KICK:
+                        SoundManager::playSoundEffect("attack" + sex);
+                        SoundManager::playSoundEffect("wind");
+                        break;
+                    case State::JUMP_KICK:
                         SoundManager::playSoundEffect("attack" + sex);
                         break;
                     case State::JUMP:
@@ -661,39 +676,44 @@ namespace mortal_kombat
                         break;
                     case State::UPPERCUT:
                     case State::HIGH_SWEEP_KICK:
-                        SoundManager::playSoundEffect("windy attack");
+                        SoundManager::playSoundEffect("hard wind");
                         break;
                     case State::CROUCH_HIT: //doesn't work...
                         std::cout << "crouch hit" << std::endl;
                         break;
                     case State::PUNCH_HEAD_HIT:
                         std::cout << "punch head hit" << std::endl;
-                        //todo: from punch should include regular player and hit sound
+                        SoundManager::playSoundEffect("hit");
+                        SoundManager::playSoundEffect("hit" + sex);
                         break;
                     case State::KICK_HEAD_HIT:
                         std::cout << "kick head hit" << std::endl;
-                        //todo: from kick should include only hit sound
+                        SoundManager::playSoundEffect("hard hit");
                         break;
                     case State::KICKBACK_TORSO_HIT:
                         std::cout << "kickback torso hit" << std::endl;
-                        //todo: no player sound. just hit sound
+                        SoundManager::playSoundEffect("hit");
                         //when kicking not on head
                         break;
                     case State::TORSO_HIT:
                         std::cout << "torso hit" << std::endl;
                         //when punching not on head
-                        //todo: quiet hit sound
                         SoundManager::playSoundEffect("hit" + sex);
+                        SoundManager::playSoundEffect("quiet hit");
                         break;
                     case State::UPPERCUT_HIT:
                         SoundManager::playSoundEffect("uppercut hit" + sex);
-                        //todo: also add fall down hard sound. But it might not look good with this animation, so another sound might be needed.
+                        SoundManager::playSoundEffect("hard hit");
                         break;
                     case State::LANDING:
-                        SoundManager::playSoundEffect("landing");
+                        SoundManager::playSoundEffect("landing"); //quiet
                         break;
                     case State::FALL_INPLACE:
                         SoundManager::playSoundEffect("falling down from kick", 225);
+                        break;
+                    case State::FALL: //after hit by high sweep kick
+                        SoundManager::playSoundEffect("hard hit");
+                        SoundManager::playSoundEffect("landing", 200); //more quiet
                         break;
                     case State::SPECIAL_1:
                     case State::SPECIAL_2:
