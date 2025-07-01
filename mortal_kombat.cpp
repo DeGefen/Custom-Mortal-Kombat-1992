@@ -33,6 +33,17 @@ namespace mortal_kombat
         SoundManager::loadSoundEffect("jump female", "res/sound/sound effects/female/jump/jump3.mp3");
         SoundManager::loadSoundEffect("jump female", "res/sound/sound effects/female/jump/jump4.mp3");
 
+        SoundManager::loadSoundEffect("hit male1", "res/sound/sound effects/male/male 1/getting hit/mk1-00194.mp3");
+        SoundManager::loadSoundEffect("hit male1", "res/sound/sound effects/male/male 1/getting hit/mk1-00195.mp3");
+        SoundManager::loadSoundEffect("hit male1", "res/sound/sound effects/male/male 1/getting hit/mk1-00196.mp3");
+        SoundManager::loadSoundEffect("hit male1", "res/sound/sound effects/male/male 1/getting hit/mk1-00197.mp3");
+        SoundManager::loadSoundEffect("hit male2", "res/sound/sound effects/male/male 2/getting hit/mk1-00210.mp3");
+        SoundManager::loadSoundEffect("hit male2", "res/sound/sound effects/male/male 2/getting hit/mk1-00211.mp3");
+        SoundManager::loadSoundEffect("hit male2", "res/sound/sound effects/male/male 2/getting hit/mk1-00212.mp3");
+        SoundManager::loadSoundEffect("hit female", "res/sound/sound effects/female/getting hit/mk1-00434.mp3");
+        SoundManager::loadSoundEffect("hit female", "res/sound/sound effects/female/getting hit/mk1-00435.mp3");
+        SoundManager::loadSoundEffect("hit female", "res/sound/sound effects/female/getting hit/mk1-00436.mp3");
+
         SoundManager::loadSoundEffect("uppercut hit male1", "res/sound/sound effects/male/male 1/really getting hit/uppercut hit1.mp3");
         SoundManager::loadSoundEffect("uppercut hit male1", "res/sound/sound effects/male/male 1/really getting hit/uppercut hit2.mp3");
         SoundManager::loadSoundEffect("uppercut hit male2", "res/sound/sound effects/male/male 2/really getting hit/uppercut hit1.mp3");
@@ -623,41 +634,66 @@ namespace mortal_kombat
                 auto& playerState = entity.get<PlayerState>();
                 auto& character = entity.get<Character>();
 
-                std::string soundEffect;
+                std::string sex;
+                if (character.sex == MALE) {
+                    if (playerState.playerNumber == 1)
+                        sex = " male1";
+                    else
+                        sex = " male2";
+                }
+                else if (character.sex == FEMALE)
+                    sex = " female";
+
                 switch (playerState.soundState)
                 {
-                    case State::LOW_PUNCH:
-                    case State::HIGH_PUNCH:
-                    case State::LOW_KICK:
-                    case State::HIGH_KICK:
-                    case State::LOW_SWEEP_KICK:
-                    case State::JUMP_KICK:
-                        soundEffect = "attack";
+                    case State::LOW_PUNCH: //todo: need windy sound
+                    case State::HIGH_PUNCH://todo: need windy sound
+                    case State::LOW_KICK: //todo: need windy sound
+                    case State::HIGH_KICK: //todo: need windy sound
+                    case State::LOW_SWEEP_KICK: //todo: need windy sound
+                    case State::JUMP_KICK: //no windy sound here
+                        SoundManager::playSoundEffect("attack" + sex);
                         break;
                     case State::JUMP:
                     case State::JUMP_BACK:
                     case State::ROLL: //Jump Forward
-                        soundEffect = "jump";
+                        SoundManager::playSoundEffect("jump" + sex);
                         break;
                     case State::UPPERCUT:
                     case State::HIGH_SWEEP_KICK:
-                        soundEffect = "windy attack";
+                        SoundManager::playSoundEffect("windy attack");
                         break;
-                    case State::CROUCH_HIT:
-                    case State::HEAD_HIT:
-                    case State::KICKBACK_TORSO_HIT: //probably
-                    case State::TORSO_HIT: //probably
-                        //todo: hit sound
+                    case State::CROUCH_HIT: //doesn't work...
+                        std::cout << "crouch hit" << std::endl;
+                        break;
+                    case State::PUNCH_HEAD_HIT:
+                        std::cout << "punch head hit" << std::endl;
+                        //todo: from punch should include regular player and hit sound
+                        break;
+                    case State::KICK_HEAD_HIT:
+                        std::cout << "kick head hit" << std::endl;
+                        //todo: from kick should include only hit sound
+                        break;
+                    case State::KICKBACK_TORSO_HIT:
+                        std::cout << "kickback torso hit" << std::endl;
+                        //todo: no player sound. just hit sound
+                        //when kicking not on head
+                        break;
+                    case State::TORSO_HIT:
+                        std::cout << "torso hit" << std::endl;
+                        //when punching not on head
+                        //todo: quiet hit sound
+                        SoundManager::playSoundEffect("hit" + sex);
                         break;
                     case State::UPPERCUT_HIT:
-                        soundEffect = "uppercut hit";
+                        SoundManager::playSoundEffect("uppercut hit" + sex);
                         //todo: also add fall down hard sound. But it might not look good with this animation, so another sound might be needed.
                         break;
                     case State::LANDING:
-                        soundEffect = "landing";
+                        SoundManager::playSoundEffect("landing");
                         break;
                     case State::FALL_INPLACE:
-                        SoundManager::playSoundEffect("falling down from kick", 200);
+                        SoundManager::playSoundEffect("falling down from kick", 225);
                         break;
                     case State::SPECIAL_1:
                     case State::SPECIAL_2:
@@ -671,29 +707,15 @@ namespace mortal_kombat
                 static bool playedGameOverSound = false;
                 if (isGameOver() && !playedGameOverSound) {
                     SoundManager::stopMusic();
-                    soundEffect = "game over";
+                    SoundManager::playSoundEffect("game over");
                     playedGameOverSound = true;
                 }
 
-                    if (playerState.isSpecialAttack)
-                    {
-                        auto& specialAttackData = entity.get<Character>().getSpecialAttackData(entity.get<PlayerState>().state);
-                    }
-
-                std::string sex;
-                if (soundEffect == "attack" || soundEffect == "jump" || soundEffect == "uppercut hit") {
-                    if (character.sex == MALE) {
-                        if (playerState.playerNumber == 1)
-                            sex = " male1";
-                        else
-                            sex = " male2";
-                    }
-                    else if (character.sex == FEMALE)
-                        sex = " female";
+                if (playerState.isSpecialAttack)
+                {
+                    auto& specialAttackData = entity.get<Character>().getSpecialAttackData(entity.get<PlayerState>().state);
                 }
 
-                if (!soundEffect.empty())
-                    SoundManager::playSoundEffect(soundEffect + sex);
                 playerState.soundState = State::STANCE;
             }
         }
@@ -1343,7 +1365,8 @@ namespace mortal_kombat
             }
             else
             {
-                playerState.state = playerState.soundState = State::HEAD_HIT ;
+                playerState.state = State::HEAD_HIT;
+                playerState.soundState = State::PUNCH_HEAD_HIT;
             }
             playerState.busyFrames = character.sprite[playerState.state].frameCount;
             playerState.busy = true;
@@ -1382,7 +1405,8 @@ namespace mortal_kombat
             }
             else
             {
-                playerState.state = playerState.soundState = State::HEAD_HIT ;
+                playerState.state = State::HEAD_HIT;
+                playerState.soundState = State::KICK_HEAD_HIT;
             }
             playerState.busyFrames = character.sprite[playerState.state].frameCount;
             playerState.busy = true;
