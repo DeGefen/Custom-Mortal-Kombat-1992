@@ -45,7 +45,7 @@ void SoundManager::onChannelFinished(int channel) {
     }
 }
 
-bool SoundManager::playMusic(const std::string& path, int loops) {
+bool SoundManager::playMusic(const std::string& path, int volume) {
     stopMusic();
 
     s_CurrentMusic = Mix_LoadMUS(path.c_str());
@@ -54,7 +54,9 @@ bool SoundManager::playMusic(const std::string& path, int loops) {
         return false;
     }
 
-    if (!Mix_PlayMusic(s_CurrentMusic, loops)) {
+    Mix_VolumeMusic(volume);
+
+    if (!Mix_PlayMusic(s_CurrentMusic, -1)) {
         SDL_Log("Failed to play music: %s", SDL_GetError());
         Mix_FreeMusic(s_CurrentMusic);
         s_CurrentMusic = nullptr;

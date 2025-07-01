@@ -109,7 +109,7 @@ namespace mortal_kombat
         SoundManager::playMusic("res/sound/background music/Character Select.mp3");
         auto [p1Index, p2Index] = chooseFighterScreen();
         SoundManager::stopMusic();
-        //SoundManager::playMusic("res/sound/background music/academic tel aviv theme.mp3");
+        SoundManager::playMusic("res/sound/background music/The Courtyard.mp3", 106);
 
         Character character1 = Characters::ALL_CHARACTERS[p1Index];
         Character character2 = Characters::ALL_CHARACTERS[p2Index];
@@ -143,6 +143,7 @@ namespace mortal_kombat
         if (win != nullptr)
             SDL_DestroyWindow(win);
 
+        SoundManager::shutdown();
         SDL_Quit();
     }
 
@@ -710,7 +711,7 @@ namespace mortal_kombat
                         break;
                     case State::FALL: //after hit by high sweep kick
                         SoundManager::playSoundEffect("hard hit");
-                        SoundManager::playSoundEffectWithDelay("landing", 200, 20); //more quiet
+                        SoundManager::playSoundEffectWithDelay("landing", 200, 20);
                         break;
                     case State::SPECIAL_1:
                     case State::SPECIAL_2:

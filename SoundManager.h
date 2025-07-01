@@ -29,7 +29,7 @@ public:
     static bool init();
     static void shutdown();
 
-    static bool playMusic(const std::string& path, int loops = -1);
+    static bool playMusic(const std::string& path, int volume = -1);
     static void stopMusic();
 
     static bool loadSoundEffect(const std::string& name, const std::string& path);
