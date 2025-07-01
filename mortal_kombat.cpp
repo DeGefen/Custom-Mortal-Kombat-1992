@@ -39,6 +39,11 @@ namespace mortal_kombat
         SoundManager::loadSoundEffect("uppercut hit female", "res/sound/sound effects/female/really getting hit/uppercut hit1.mp3");
         SoundManager::loadSoundEffect("uppercut hit female", "res/sound/sound effects/female/really getting hit/uppercut hit2.mp3");
 
+        SoundManager::loadSoundEffect("game over", "res/sound/sound effects/music cues/game over/mk1-00017.mp3");
+        SoundManager::loadSoundEffect("game over", "res/sound/sound effects/music cues/game over/mk1-00024.mp3");
+        SoundManager::loadSoundEffect("game over", "res/sound/sound effects/music cues/game over/mk1-00238.mp3");
+        SoundManager::loadSoundEffect("game over", "res/sound/sound effects/music cues/game over/mk1-00239.mp3");
+
         SoundManager::loadSoundEffect("windy attack", "res/sound/sound effects/hitsounds/wind/windy attack.mp3");
         SoundManager::loadSoundEffect("landing", "res/sound/sound effects/hitsounds/landing.mp3");
     }
@@ -603,7 +608,7 @@ namespace mortal_kombat
     }
 
 
-    void MK::SoundSystem()
+    void MK::SoundSystem() const
     {
         static const bagel::Mask maskPlayer = bagel::MaskBuilder()
             .set<PlayerState>()
@@ -659,6 +664,12 @@ namespace mortal_kombat
                         break;
                     default:
                         break;
+                }
+
+                static bool playedGameOverSound = false;
+                if (isGameOver() && !playedGameOverSound) {
+                    soundEffect = "game over";
+                    playedGameOverSound = true;
                 }
 
                     if (playerState.isSpecialAttack)

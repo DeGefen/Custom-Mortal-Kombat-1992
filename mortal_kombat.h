@@ -370,7 +370,7 @@ namespace mortal_kombat
         static void MovementSystem();
 
         /// @brief Plays sound based on entities states.
-        static void SoundSystem();
+        void SoundSystem() const;
 
         /// @brief returns the position of the entity in the Box2D world.
         static b2Vec2 getPosition(const Position& position)
