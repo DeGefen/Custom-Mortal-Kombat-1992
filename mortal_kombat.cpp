@@ -657,7 +657,7 @@ namespace mortal_kombat
                 else if (character.sex == FEMALE)
                     sex = " female";
 
-                switch (playerState.soundState) //todo: go over effects and make some more quiet
+                switch (playerState.soundState)
                 {
                     case State::LOW_PUNCH:
                     case State::HIGH_PUNCH:
