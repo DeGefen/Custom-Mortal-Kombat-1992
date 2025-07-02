@@ -680,21 +680,21 @@ namespace mortal_kombat
                         SoundManager::playSoundEffect("hard wind", 74);
                         break;
                     case State::PUNCH_HEAD_HIT:
-                        std::cout << "punch head hit" << std::endl;
+                        //std::cout << "punch head hit" << std::endl;
                         SoundManager::playSoundEffect("hit", 60);
                         SoundManager::playSoundEffect("hit" + sex, 80);
                         break;
                     case State::KICK_HEAD_HIT:
-                        std::cout << "kick head hit" << std::endl;
+                        //std::cout << "kick head hit" << std::endl;
                         SoundManager::playSoundEffect("hard hit", 74);
                         break;
                     case State::KICKBACK_TORSO_HIT:
-                        std::cout << "kickback torso hit" << std::endl;
+                        //std::cout << "kickback torso hit" << std::endl;
                         SoundManager::playSoundEffect("hit", 60);
                         //when kicking not on head
                         break;
                     case State::TORSO_HIT:
-                        std::cout << "torso hit" << std::endl;
+                        //std::cout << "torso hit" << std::endl;
                         //when punching not on head
                         SoundManager::playSoundEffect("hit" + sex, 60);
                         SoundManager::playSoundEffect("quiet hit", 40);
@@ -713,13 +713,8 @@ namespace mortal_kombat
                         SoundManager::playSoundEffect("hard hit", 115);
                         SoundManager::playSoundEffectWithDelay("landing", 200, 23);
                         break;
-                    case State::SPECIAL_1:
-                    case State::SPECIAL_2:
-                    case State::SPECIAL_3:
-                        //todo: need to find a sound for this (might not be the same for all those sounds
-                        break;
                     case State::CROUCH_HIT: //doesn't work...
-                        std::cout << "crouch hit" << std::endl;
+                        //std::cout << "crouch hit" << std::endl;
                         break;
                     default:
                         break;
@@ -730,11 +725,6 @@ namespace mortal_kombat
                     SoundManager::stopMusic();
                     SoundManager::playSoundEffect("game over");
                     playedGameOverSound = true;
-                }
-
-                if (playerState.isSpecialAttack)
-                {
-                    auto& specialAttackData = entity.get<Character>().getSpecialAttackData(entity.get<PlayerState>().state);
                 }
 
                 playerState.soundState = State::STANCE;
