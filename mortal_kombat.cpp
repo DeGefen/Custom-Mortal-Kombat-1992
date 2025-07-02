@@ -1,5 +1,6 @@
 #include "mortal_kombat_info.h"
 #include "mortal_kombat.h"
+#include "SoundManager.h"
 #include <iostream>
 #include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
@@ -9,12 +10,81 @@ namespace mortal_kombat
 {
     std::unordered_map<std::string, SDL_Texture*> MK::TextureSystem::textureCache;
 
+    void MK::loadSoundEffects() {
+        SoundManager::loadSoundEffect("start", "res/sound/sound effects/music cues/start sound.mp3");
+        SoundManager::loadSoundEffect("player 1 press", "res/sound/sound effects/ui/player 1 press.mp3");
+        SoundManager::loadSoundEffect("player 2 press", "res/sound/sound effects/ui/player 2 press.mp3");
+
+        SoundManager::loadSoundEffect("attack male1", "res/sound/sound effects/male/male 1/attack/mk1-00192.mp3");
+        SoundManager::loadSoundEffect("attack male1", "res/sound/sound effects/male/male 1/attack/mk1-00193.mp3");
+        SoundManager::loadSoundEffect("attack male2", "res/sound/sound effects/male/male 2/attack/mk1-00208.mp3");
+        SoundManager::loadSoundEffect("attack male2", "res/sound/sound effects/male/male 2/attack/mk1-00209.mp3");
+        SoundManager::loadSoundEffect("attack female", "res/sound/sound effects/female/attack/short.mp3");
+        SoundManager::loadSoundEffect("attack female", "res/sound/sound effects/female/attack/long.mp3");
+
+        SoundManager::loadSoundEffect("jump male1", "res/sound/sound effects/male/male 1/jump/mk1-00199.mp3");
+        SoundManager::loadSoundEffect("jump male1", "res/sound/sound effects/male/male 1/jump/mk1-00200.mp3");
+        SoundManager::loadSoundEffect("jump male2", "res/sound/sound effects/male/male 2/jump/mk1-00213.mp3");
+        SoundManager::loadSoundEffect("jump male2", "res/sound/sound effects/male/male 2/jump/mk1-00214.mp3");
+        SoundManager::loadSoundEffect("jump male2", "res/sound/sound effects/male/male 2/jump/mk1-00215.mp3");
+        SoundManager::loadSoundEffect("jump male2", "res/sound/sound effects/male/male 2/jump/mk1-00216.mp3");
+        SoundManager::loadSoundEffect("jump female", "res/sound/sound effects/female/jump/jump1.mp3");
+        SoundManager::loadSoundEffect("jump female", "res/sound/sound effects/female/jump/jump2.mp3");
+        SoundManager::loadSoundEffect("jump female", "res/sound/sound effects/female/jump/jump3.mp3");
+        SoundManager::loadSoundEffect("jump female", "res/sound/sound effects/female/jump/jump4.mp3");
+
+        SoundManager::loadSoundEffect("quiet hit", "res/sound/sound effects/hitsounds/hit/lvl1.mp3");
+        SoundManager::loadSoundEffect("hit", "res/sound/sound effects/hitsounds/hit/mk1-00053.mp3");
+        SoundManager::loadSoundEffect("hit", "res/sound/sound effects/hitsounds/hit/mk1-00054.mp3");
+        SoundManager::loadSoundEffect("hard hit", "res/sound/sound effects/hitsounds/hard hit/mk1-00131.mp3");
+        SoundManager::loadSoundEffect("hard hit", "res/sound/sound effects/hitsounds/hard hit/mk1-00172.mp3");
+        SoundManager::loadSoundEffect("hard hit", "res/sound/sound effects/hitsounds/hard hit/mk1-00173.mp3");
+        SoundManager::loadSoundEffect("hard hit", "res/sound/sound effects/hitsounds/hard hit/mk1-00180.mp3");
+
+        SoundManager::loadSoundEffect("hit male1", "res/sound/sound effects/male/male 1/getting hit/mk1-00194.mp3");
+        SoundManager::loadSoundEffect("hit male1", "res/sound/sound effects/male/male 1/getting hit/mk1-00195.mp3");
+        SoundManager::loadSoundEffect("hit male1", "res/sound/sound effects/male/male 1/getting hit/mk1-00196.mp3");
+        SoundManager::loadSoundEffect("hit male1", "res/sound/sound effects/male/male 1/getting hit/mk1-00197.mp3");
+        SoundManager::loadSoundEffect("hit male2", "res/sound/sound effects/male/male 2/getting hit/mk1-00210.mp3");
+        SoundManager::loadSoundEffect("hit male2", "res/sound/sound effects/male/male 2/getting hit/mk1-00211.mp3");
+        SoundManager::loadSoundEffect("hit male2", "res/sound/sound effects/male/male 2/getting hit/mk1-00212.mp3");
+        SoundManager::loadSoundEffect("hit female", "res/sound/sound effects/female/getting hit/mk1-00434.mp3");
+        SoundManager::loadSoundEffect("hit female", "res/sound/sound effects/female/getting hit/mk1-00435.mp3");
+        SoundManager::loadSoundEffect("hit female", "res/sound/sound effects/female/getting hit/mk1-00436.mp3");
+
+        SoundManager::loadSoundEffect("uppercut hit male1", "res/sound/sound effects/male/male 1/really getting hit/uppercut hit1.mp3");
+        SoundManager::loadSoundEffect("uppercut hit male1", "res/sound/sound effects/male/male 1/really getting hit/uppercut hit2.mp3");
+        SoundManager::loadSoundEffect("uppercut hit male2", "res/sound/sound effects/male/male 2/really getting hit/uppercut hit1.mp3");
+        SoundManager::loadSoundEffect("uppercut hit female", "res/sound/sound effects/female/really getting hit/uppercut hit1.mp3");
+        SoundManager::loadSoundEffect("uppercut hit female", "res/sound/sound effects/female/really getting hit/uppercut hit2.mp3");
+
+        SoundManager::loadSoundEffect("game over", "res/sound/sound effects/music cues/game over/mk1-00017.mp3");
+        SoundManager::loadSoundEffect("game over", "res/sound/sound effects/music cues/game over/mk1-00024.mp3");
+        SoundManager::loadSoundEffect("game over", "res/sound/sound effects/music cues/game over/mk1-00238.mp3");
+        SoundManager::loadSoundEffect("game over", "res/sound/sound effects/music cues/game over/mk1-00239.mp3");
+
+        SoundManager::loadSoundEffect("hard wind", "res/sound/sound effects/hitsounds/wind/hard wind.mp3");
+        SoundManager::loadSoundEffect("wind", "res/sound/sound effects/hitsounds/wind/mk1-00059.mp3");
+        SoundManager::loadSoundEffect("wind", "res/sound/sound effects/hitsounds/wind/mk1-00060.mp3");
+        SoundManager::loadSoundEffect("wind", "res/sound/sound effects/hitsounds/wind/mk1-00061.mp3");
+
+        SoundManager::loadSoundEffect("landing", "res/sound/sound effects/hitsounds/landing.mp3");
+        SoundManager::loadSoundEffect("falling down from kick", "res/sound/sound effects/hitsounds/falling down from kick.mp3");
+    }
+
     void MK::start()
     {
         if (!SDL_Init(SDL_INIT_VIDEO)) {
             std::cout << SDL_GetError() << std::endl;
             return;
         }
+
+        if (!SoundManager::init()) {
+            SDL_Log("Sound system failed to init");
+            return;
+        }
+
+        loadSoundEffects();
 
         if (!SDL_CreateWindowAndRenderer(
                 "MK1992", WINDOW_WIDTH, WINDOW_HEIGHT, 0, &win, &ren)) {
@@ -30,10 +100,17 @@ namespace mortal_kombat
 
         createBackground("res/Background.png");
 
+        SoundManager::playSoundEffect("start");
+
         createBoundary(LEFT);
         createBoundary(RIGHT);
         initialScreen();  // Show intro splash before the game loop
+
+        SoundManager::playMusic("res/sound/background music/Character Select.mp3");
         auto [p1Index, p2Index] = chooseFighterScreen();
+        SoundManager::stopMusic();
+        SoundManager::playMusic("res/sound/background music/The Courtyard.mp3", 55);
+
         Character character1 = Characters::ALL_CHARACTERS[p1Index];
         Character character2 = Characters::ALL_CHARACTERS[p2Index];
 
@@ -66,6 +143,7 @@ namespace mortal_kombat
         if (win != nullptr)
             SDL_DestroyWindow(win);
 
+        SoundManager::shutdown();
         SDL_Quit();
     }
 
@@ -162,15 +240,19 @@ namespace mortal_kombat
                 switch (event.key.key) {
                     case SDLK_LEFT:
                         if (selectedP2 % GRID_COLS > 0) selectedP2--;
+                        SoundManager::playSoundEffect("player 2 press");
                         break;
                     case SDLK_RIGHT:
                         if (selectedP2 % GRID_COLS < GRID_COLS - 2) selectedP2++;
+                        SoundManager::playSoundEffect("player 2 press");
                         break;
                     case SDLK_A:
                         if (selectedP1 % GRID_COLS > 0) selectedP1--;
+                        SoundManager::playSoundEffect("player 1 press");
                         break;
                     case SDLK_D:
                         if (selectedP1 % GRID_COLS < GRID_COLS - 2) selectedP1++;
+                        SoundManager::playSoundEffect("player 1 press");
                         break;
                     case SDLK_RETURN:
                     case SDLK_KP_ENTER:
@@ -360,6 +442,7 @@ namespace mortal_kombat
         RenderSystem();
         HealthBarSystem();
         AttackDecaySystem();
+        SoundSystem();
 
         if (Uint32 frameTime = SDL_GetTicks() - frameStart; FRAME_DELAY > frameTime) {
             SDL_Delay(FRAME_DELAY - frameTime);
@@ -431,7 +514,7 @@ namespace mortal_kombat
                                         * (collider.isPlayerSensor ? 0.0f : 1.0f)
                                         * (collider.isRightBoundarySensor && playerState.direction == RIGHT ? 0.0f : 1.0f)
                                         * (collider.isLeftBoundarySensor && playerState.direction == LEFT ? 0.0f : 1.0f);
-;
+
                         break;
                     case State::KICKBACK_TORSO_HIT:
                         movement.vx = KICKBACK_SPEED
@@ -499,7 +582,7 @@ namespace mortal_kombat
                                 playerState.state == State::JUMP_KICK)
                             {
                                 playerState.reset();
-                                playerState.state = State::LANDING;
+                                playerState.state = playerState.soundState = State::LANDING;
                                 playerState.currFrame = 0;
                                 playerState.busy = true;
                                 playerState.busyFrames = character.sprite[State::LANDING].frameCount;
@@ -548,6 +631,107 @@ namespace mortal_kombat
             }
         }
     }
+
+
+    void MK::SoundSystem() const
+    {
+        static const bagel::Mask maskPlayer = bagel::MaskBuilder()
+            .set<PlayerState>()
+            .set<Character>()
+            .build();
+
+        for (bagel::ent_type e = {0}; e.id <= bagel::World::maxId().id; ++e.id)
+        {
+            if (bagel::Entity entity{e}; entity.test(maskPlayer))
+            {
+                auto& playerState = entity.get<PlayerState>();
+                auto& character = entity.get<Character>();
+
+                std::string sex;
+                if (character.sex == MALE) {
+                    if (playerState.playerNumber == 1)
+                        sex = " male1";
+                    else
+                        sex = " male2";
+                }
+                else if (character.sex == FEMALE)
+                    sex = " female";
+
+                switch (playerState.soundState)
+                {
+                    case State::LOW_PUNCH:
+                    case State::HIGH_PUNCH:
+                    case State::LOW_KICK:
+                    case State::HIGH_KICK:
+                    case State::LOW_SWEEP_KICK:
+                        SoundManager::playSoundEffect("attack" + sex, 90);
+                        SoundManager::playSoundEffect("wind", 50);
+                        break;
+                    case State::JUMP_KICK:
+                        SoundManager::playSoundEffect("attack" + sex, 90);
+                        break;
+                    case State::JUMP:
+                    case State::JUMP_BACK:
+                    case State::ROLL: //Jump Forward
+                        SoundManager::playSoundEffect("jump" + sex, 52);
+                        break;
+                    case State::UPPERCUT:
+                    case State::HIGH_SWEEP_KICK:
+                        SoundManager::playSoundEffect("hard wind", 74);
+                        break;
+                    case State::PUNCH_HEAD_HIT:
+                        //std::cout << "punch head hit" << std::endl;
+                        SoundManager::playSoundEffect("hit", 60);
+                        SoundManager::playSoundEffect("hit" + sex, 80);
+                        break;
+                    case State::KICK_HEAD_HIT:
+                        //std::cout << "kick head hit" << std::endl;
+                        SoundManager::playSoundEffect("hard hit", 74);
+                        break;
+                    case State::KICKBACK_TORSO_HIT:
+                        //std::cout << "kickback torso hit" << std::endl;
+                        SoundManager::playSoundEffect("hit", 60);
+                        //when kicking not on head
+                        break;
+                    case State::TORSO_HIT:
+                        //std::cout << "torso hit" << std::endl;
+                        //when punching not on head
+                        SoundManager::playSoundEffect("hit" + sex, 60);
+                        SoundManager::playSoundEffect("quiet hit", 40);
+                        break;
+                    case State::UPPERCUT_HIT:
+                        SoundManager::playSoundEffect("uppercut hit" + sex, 90);
+                        SoundManager::playSoundEffect("hard hit", 115);
+                        break;
+                    case State::LANDING:
+                        SoundManager::playSoundEffect("landing", 2);
+                        break;
+                    case State::FALL_INPLACE:
+                        SoundManager::playSoundEffectWithDelay("falling down from kick", 225, 90);
+                        break;
+                    case State::FALL: //after hit by high sweep kick
+                        SoundManager::playSoundEffect("hard hit", 115);
+                        SoundManager::playSoundEffectWithDelay("landing", 200, 23);
+                        break;
+                    case State::CROUCH_HIT: //doesn't work...
+                        //std::cout << "crouch hit" << std::endl;
+                        break;
+                    default:
+                        break;
+                }
+
+                static bool playedGameOverSound = false;
+                if (isGameOver() && !playedGameOverSound) {
+                    SoundManager::stopMusic();
+                    SoundManager::playSoundEffect("game over");
+                    playedGameOverSound = true;
+                }
+
+                playerState.soundState = State::STANCE;
+            }
+        }
+    }
+
 
     void MK::RenderSystem() const
 {
@@ -843,7 +1027,7 @@ namespace mortal_kombat
                 if (playerState.isLaying && !playerState.busy && !playerState.isJumping)
                 {
                     playerState.reset();
-                    playerState.state = State::GETUP;
+                    playerState.state = playerState.soundState = State::GETUP;
                     playerState.busyFrames = character.sprite[playerState.state].frameCount;
                     playerState.busy = true;
                 }
@@ -856,7 +1040,7 @@ namespace mortal_kombat
                 if (shouldChangeState)
                 {
                     playerState.reset();
-                    playerState.state = state;
+                    playerState.state = playerState.soundState = state;
                     playerState.currFrame = (playerState.isCrouching && state == State::CROUCH) ? 2 : 0;
                     playerState.busyFrames = character.sprite[playerState.state].frameCount;
                     playerState.freezeFrame = freezeFrame;
@@ -920,7 +1104,7 @@ namespace mortal_kombat
                     createWinText(winner.get<Character>());
                     const bool isJumping = loser.get<PlayerState>().isJumping;
                     loser.get<PlayerState>().reset();
-                    loser.get<PlayerState>().state = State::DIE;
+                    loser.get<PlayerState>().state = loser.get<PlayerState>().soundState = State::DIE;
                     loser.get<PlayerState>().busy = true;
                     loser.get<PlayerState>().isLaying = true;
                     loser.get<PlayerState>().isJumping = isJumping;
@@ -933,7 +1117,7 @@ namespace mortal_kombat
                 {
                     const bool isJumping = winner.get<PlayerState>().isJumping;
                     winner.get<PlayerState>().reset();
-                    winner.get<PlayerState>().state = State::WIN;
+                    winner.get<PlayerState>().state = winner.get<PlayerState>().soundState = State::WIN;
                     winner.get<PlayerState>().busy = true;
                     winner.get<PlayerState>().isJumping = isJumping;
                     winner.get<PlayerState>().busyFrames = winner.get<Character>().sprite[winner.get<PlayerState>().state].frameCount;
@@ -955,7 +1139,7 @@ namespace mortal_kombat
                 if (!state.isJumping && !state.busy && state.direction != newDir) {
                     state.direction = newDir;
                     state.reset();
-                    state.state = State::TURN;
+                    state.state = state.soundState = State::TURN;
                     state.busy = true;
                     state.busyFrames = character.sprite[state.state].frameCount;
                 }
@@ -1156,11 +1340,11 @@ namespace mortal_kombat
             playerState.reset();
             if (isCrouching)
             {
-                playerState.state = State::CROUCH_HIT;
+                playerState.state = playerState.soundState = State::CROUCH_HIT;
             }
             else if (isJumping)
             {
-                playerState.state = State::FALL;
+                playerState.state = playerState.soundState = State::FALL;
                 playerState.busyFrames = character.sprite[playerState.state].frameCount;
                 playerState.freezeFrame = playerState.busyFrames - 1;
                 playerState.freezeFrameDuration = 2;
@@ -1169,7 +1353,7 @@ namespace mortal_kombat
             }
             else
             {
-                playerState.state = State::TORSO_HIT;
+                playerState.state = playerState.soundState = State::TORSO_HIT;
             }
             playerState.busyFrames = character.sprite[playerState.state].frameCount;
             playerState.busy = true;
@@ -1179,11 +1363,11 @@ namespace mortal_kombat
             playerState.reset();
             if (isCrouching)
             {
-                playerState.state = State::CROUCH_HIT;
+                playerState.state = playerState.soundState = State::CROUCH_HIT;
             }
             else if (isJumping)
             {
-                playerState.state = State::FALL;
+                playerState.state = playerState.soundState = State::FALL;
                 playerState.busyFrames = character.sprite[playerState.state].frameCount;
                 playerState.freezeFrame = playerState.busyFrames - 1;
                 playerState.freezeFrameDuration = 2;
@@ -1192,7 +1376,8 @@ namespace mortal_kombat
             }
             else
             {
-                playerState.state = State::HEAD_HIT ;
+                playerState.state = State::HEAD_HIT;
+                playerState.soundState = State::PUNCH_HEAD_HIT;
             }
             playerState.busyFrames = character.sprite[playerState.state].frameCount;
             playerState.busy = true;
@@ -1202,7 +1387,7 @@ namespace mortal_kombat
             playerState.reset();
             if (isJumping)
             {
-                playerState.state = State::FALL;
+                playerState.state = playerState.soundState = State::FALL;
                 playerState.busyFrames = character.sprite[playerState.state].frameCount;
                 playerState.freezeFrame = playerState.busyFrames - 1;
                 playerState.freezeFrameDuration = 2;
@@ -1211,7 +1396,7 @@ namespace mortal_kombat
             }
             else
             {
-                playerState.state = State::KICKBACK_TORSO_HIT ;
+                playerState.state = playerState.soundState = State::KICKBACK_TORSO_HIT ;
             }
             playerState.busyFrames = character.sprite[playerState.state].frameCount;
             playerState.busy = true;
@@ -1222,7 +1407,7 @@ namespace mortal_kombat
             playerState.reset();
             if (isJumping)
             {
-                playerState.state = State::FALL;
+                playerState.state = playerState.soundState = State::FALL;
                 playerState.busyFrames = character.sprite[playerState.state].frameCount;
                 playerState.freezeFrame = playerState.busyFrames - 1;
                 playerState.freezeFrameDuration = 2;
@@ -1231,7 +1416,8 @@ namespace mortal_kombat
             }
             else
             {
-                playerState.state = State::HEAD_HIT ;
+                playerState.state = State::HEAD_HIT;
+                playerState.soundState = State::KICK_HEAD_HIT;
             }
             playerState.busyFrames = character.sprite[playerState.state].frameCount;
             playerState.busy = true;
@@ -1241,12 +1427,12 @@ namespace mortal_kombat
             playerState.reset();
             if (isJumping)
             {
-                playerState.state = State::FALL;
+                playerState.state = playerState.soundState = State::FALL;
                 playerState.isJumping = true;
             }
             else
             {
-                playerState.state = State::FALL_INPLACE ;
+                playerState.state = playerState.soundState = State::FALL_INPLACE ;
             }
             playerState.busyFrames = character.sprite[playerState.state].frameCount;
             playerState.freezeFrame = playerState.busyFrames - 1;
@@ -1261,7 +1447,7 @@ namespace mortal_kombat
             {
                 playerState.isJumping = true;
             }
-            playerState.state = State::FALL;
+            playerState.state = playerState.soundState = State::FALL;
             playerState.busyFrames = character.sprite[playerState.state].frameCount;
             playerState.freezeFrame = playerState.busyFrames - 1;
             playerState.freezeFrameDuration = 2;
@@ -1273,12 +1459,12 @@ namespace mortal_kombat
             playerState.reset();
             if (isJumping)
             {
-                playerState.state = State::FALL;
+                playerState.state = playerState.soundState = State::FALL;
                 playerState.isJumping = true;
             }
             else
             {
-                playerState.state = State::UPPERCUT_HIT ;
+                playerState.state = playerState.soundState = State::UPPERCUT_HIT ;
             }
             playerState.busyFrames = character.sprite[playerState.state].frameCount;
             playerState.freezeFrame = playerState.busyFrames - 1;
@@ -1298,12 +1484,12 @@ namespace mortal_kombat
                 playerState.reset();
                 if (isCrouching)
                 {
-                    playerState.state = State::CROUCH_HIT;
+                    playerState.state = playerState.soundState = State::CROUCH_HIT;
                     playerState.busyFrames = character.sprite[playerState.state].frameCount;
                 }
                 else if (isJumping)
                 {
-                    playerState.state = State::FALL;
+                    playerState.state = playerState.soundState = State::FALL;
                     playerState.busyFrames = character.sprite[playerState.state].frameCount;
                     playerState.freezeFrame = playerState.busyFrames - 1;
                     playerState.freezeFrameDuration = 2;
@@ -1312,7 +1498,7 @@ namespace mortal_kombat
                 }
                 else
                 {
-                    playerState.state = specialAttackData.HitType;
+                    playerState.state = playerState.soundState = specialAttackData.HitType;
                     playerState.busyFrames = character.sprite[playerState.state].frameCount;
                     if (playerState.state == State::FALL
                         || playerState.state == State::FALL_INPLACE

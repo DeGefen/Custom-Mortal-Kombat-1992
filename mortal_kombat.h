@@ -47,6 +47,8 @@ namespace mortal_kombat
         void gameIteration(int& frame_count) const;
         bool isGameOver() const;
 
+        static void loadSoundEffects();
+
         /// @brief Initializes the game.
         void start();
 
@@ -54,7 +56,6 @@ namespace mortal_kombat
         void destroy() const;
 
     private:
-
         static constexpr int FPS = 60;
         static constexpr float	BOX2D_STEP = 1.f/FPS;
 
@@ -85,6 +86,8 @@ namespace mortal_kombat
 
         static constexpr bool LEFT = true;
         static constexpr bool RIGHT = false;
+        static constexpr bool FEMALE = true;
+        static constexpr bool MALE = false;
 
         // Background constants
         // -------------------------------------------------------
@@ -150,6 +153,7 @@ namespace mortal_kombat
             int currFrame = 0; //  Frames spent in the current state
             int freezeFrame = NONE; // Frame to freeze the player
             int freezeFrameDuration = 0; // Duration of the freeze-frame
+            State soundState = state; //stance to play the sound of
 
             /// @brief Resets the player state to default values.
             void reset()
@@ -317,6 +321,7 @@ namespace mortal_kombat
             SDL_FRect leftBarNameSource{};
             SDL_FRect rightBarNameSource{};
             SpriteInfo winText;
+            bool sex;
 
             SpecialAttackData& getSpecialAttackData(State state)
             {
@@ -363,6 +368,9 @@ namespace mortal_kombat
 
         /// @brief Updates the position of entities based on their movement components.
         static void MovementSystem();
+
+        /// @brief Plays sound based on entities states.
+        void SoundSystem() const;
 
         /// @brief returns the position of the entity in the Box2D world.
         static b2Vec2 getPosition(const Position& position)
@@ -551,6 +559,7 @@ namespace mortal_kombat
                 .leftBarNameSource = MOSHE_NAME_BAR_LEFT_SOURCE,
                 .rightBarNameSource = MOSHE_NAME_BAR_RIGHT_SOURCE,
                 .winText = WIN_SPRITE[CharacterType::MOSHE],
+                .sex = MALE,
             };
 
             constexpr static Character ITAMAR = {
@@ -562,6 +571,7 @@ namespace mortal_kombat
                 .leftBarNameSource = ITAMAR_NAME_BAR_LEFT_SOURCE,
                 .rightBarNameSource = ITAMAR_NAME_BAR_RIGHT_SOURCE,
                 .winText = WIN_SPRITE[CharacterType::ITAMAR],
+                .sex = MALE,
             };
 
             constexpr static Character YANIV = {
@@ -573,6 +583,7 @@ namespace mortal_kombat
                 .leftBarNameSource = YANIV_NAME_BAR_LEFT_SOURCE,
                 .rightBarNameSource = YANIV_NAME_BAR_RIGHT_SOURCE,
                 .winText = WIN_SPRITE[CharacterType::YANIV],
+                .sex = MALE,
             };
 
             constexpr static Character GEFEN = {
@@ -584,6 +595,7 @@ namespace mortal_kombat
                 .leftBarNameSource = GEFEN_NAME_BAR_LEFT_SOURCE,
                 .rightBarNameSource = GEFEN_NAME_BAR_RIGHT_SOURCE,
                 .winText = WIN_SPRITE[CharacterType::GEFEN],
+                .sex = MALE,
             };
 
             constexpr static Character OFEK = {
@@ -595,6 +607,7 @@ namespace mortal_kombat
                 .leftBarNameSource = OFEK_NAME_BAR_LEFT_SOURCE,
                 .rightBarNameSource = OFEK_NAME_BAR_RIGHT_SOURCE,
                 .winText = WIN_SPRITE[CharacterType::OFEK],
+                .sex = FEMALE,
             };
 
             constexpr static Character YONATAN = { // WIP
@@ -606,6 +619,7 @@ namespace mortal_kombat
                 .leftBarNameSource = YONATAN_NAME_BAR_LEFT_SOURCE,
                 .rightBarNameSource = YONATAN_NAME_BAR_RIGHT_SOURCE,
                 .winText = WIN_SPRITE[CharacterType::YONATAN],
+                .sex = MALE,
             };
 
             constexpr static std::array<Character, numOfFighters> ALL_CHARACTERS = {

@@ -46,6 +46,8 @@ namespace mortal_kombat
         WALK_FORWARDS,
         WALK_BACKWARDS,
         WIN,
+        PUNCH_HEAD_HIT, //for sound only
+        KICK_HEAD_HIT, //for sound only
     };
 
 
