@@ -7,10 +7,8 @@ A faithful recreation of the classic **Mortal Kombat (1992)** arcade fighting ga
 - [About](#about)
 - [Features](#features)
 - [Screenshots](#screenshots)
-- [Installation](#installation)
 - [Controls](#controls)
 - [Development](#development)
-- [Contributing](#contributing)
 - [License](#license)
 
 ---
@@ -31,13 +29,12 @@ This project reimagines the original Mortal Kombat (1992) arcade game using mode
 - Entirely custom-made art for all fighters and backgrounds
 
 ## Screenshots
+<img width="1584" height="1190" alt="image" src="https://github.com/user-attachments/assets/9846fd55-ee23-4641-ac0b-aec363241485" />
 
-<!-- Add screenshots to the project folder and reference them here -->
-<!-- ![Gameplay Screenshot](screenshots/gameplay1.png) -->
-
-## Installation
+<img width="1584" height="1190" alt="image" src="https://github.com/user-attachments/assets/c77f0981-8ede-4dde-a12f-9c6f23319d03" />
 
 ### Build Instructions
+> recommended using jetbrains CLion
 
 1. **Clone the repository:**
    ```sh
