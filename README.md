@@ -19,6 +19,11 @@ This project reimagines the original Mortal Kombat (1992) arcade game using mode
 
 **All characters and backgrounds are entirely custom made** This project serves as an educational exploration of game engine design, graphics rendering, and retro game mechanics.
 
+The project leverages:
+- **SDL3** for cross-platform multimedia, input, and graphics support.
+- **Box2D** for realistic 2D physics simulation.
+- **Entity-Component-System (ECS)** architecture for modular, efficient game logic and engine design.
+
 ## Features
 
 - Core fighting mechanics inspired by the original game
@@ -27,6 +32,8 @@ This project reimagines the original Mortal Kombat (1992) arcade game using mode
 - Custom input handling
 - Modular engine architecture (rendering, input, audio, game logic) powered by ECS design
 - Entirely custom-made art for all fighters and backgrounds
+- Physics simulation using Box2D
+- Cross-platform support using SDL3
 
 ## Screenshots
 <img width="1584" height="1190" alt="image" src="https://github.com/user-attachments/assets/9846fd55-ee23-4641-ac0b-aec363241485" />
@@ -81,6 +88,7 @@ This project reimagines the original Mortal Kombat (1992) arcade game using mode
 - Engine modules are organized by functionality (render, input, audio, etc).
 - Game logic, systems, and entities are structured using ECS principles.
 - Game assets (sprites, audio, etc) are in the `res/`.
+- Uses **SDL3** for multimedia/input and **Box2D** for physics.
 
 ## License
 
